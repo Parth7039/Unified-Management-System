@@ -10,7 +10,7 @@ class CustomContainer extends StatelessWidget {
       child: Container(
         width: 250,
         decoration: BoxDecoration(
-          color: Color(0xFF4577D0),
+          color: Color(0xFF3D52A0),
           borderRadius: BorderRadius.circular(11)
         ),
         child: ListView(
