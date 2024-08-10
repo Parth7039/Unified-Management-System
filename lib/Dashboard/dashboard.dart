@@ -20,7 +20,7 @@ class _DashboardPageState extends State<DashboardPage> {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
-            CustomContainer(),
+            // CustomContainer(),
             Expanded(
               child: Column(
                 children: [

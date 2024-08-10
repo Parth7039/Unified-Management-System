@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:ums/Contracts/contracts.dart';
-import 'package:ums/Dashboard/dashboard.dart';
+import 'package:ums/Dashboard/dashboard.dart'; // Assuming you have these pages
+import 'package:ums/Screens/InventoryPage.dart';
+
+import 'homepage.dart'; // Create this page as needed
 
 void main() {
-  runApp(const MainApp());
+  runApp(MyApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: DashboardPage(),
+      home: HomePage(),
     );
   }
 }
