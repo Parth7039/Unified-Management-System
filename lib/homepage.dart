@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'Dashboard/dashboard.dart';
+import 'Feature/Dashboard/dashboard.dart';
 import 'Screens/InventoryPage.dart';
 
 class HomePage extends StatefulWidget {
