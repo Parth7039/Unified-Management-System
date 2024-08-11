@@ -7,19 +7,25 @@ class InventoryPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
+        backgroundColor: Colors.white54,
+        elevation: 2,
+        titleSpacing: 0,
         title: Text(
           'Order Statistic',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.calendar_today, color: Colors.black),
+            icon: Icon(Icons.calendar_today_outlined, color: Colors.black),
             onPressed: () {
               // Handle date picker or any other action
             },
           ),
+          SizedBox(width: 10),
         ],
       ),
       body: Padding(
@@ -44,25 +50,25 @@ class InventoryPage extends StatelessWidget {
           title: "Today's Sale",
           value: '\$24,763',
           percentageChange: '+12%',
-          color: Colors.blue,
+          color: Colors.blueAccent,
         ),
         _buildStatisticCard(
-          title: "Today's Total Orders",
+          title: "Today's Orders",
           value: '270',
           percentageChange: '-17.5%',
-          color: Colors.cyan,
+          color: Colors.cyanAccent,
         ),
         _buildStatisticCard(
           title: "Today's Revenue",
           value: '\$1,235',
           percentageChange: '-3.7%',
-          color: Colors.red,
+          color: Colors.redAccent,
         ),
         _buildStatisticCard(
           title: "Today's Visitors",
           value: '19,465',
           percentageChange: '+10.9%',
-          color: Colors.amber,
+          color: Colors.amberAccent,
         ),
       ],
     );
@@ -74,40 +80,44 @@ class InventoryPage extends StatelessWidget {
     required String percentageChange,
     required Color color,
   }) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey,
+    return Container(
+      width: 350,
+      child: Card(
+        color: Colors.white, // Match background color
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey[700],
+                ),
               ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: color,
+              SizedBox(height: 8),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
               ),
-            ),
-            SizedBox(height: 4),
-            Text(
-              percentageChange,
-              style: TextStyle(
-                fontSize: 12,
-                color: percentageChange.contains('-') ? Colors.red : Colors.green,
+              SizedBox(height: 4),
+              Text(
+                percentageChange,
+                style: TextStyle(
+                  fontSize: 20,
+                  color: percentageChange.contains('-') ? Colors.red : Colors.green,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -115,15 +125,11 @@ class InventoryPage extends StatelessWidget {
 
   Widget _buildCharts() {
     return Expanded(
-      child: GridView.count(
-        crossAxisCount: 2,
-        crossAxisSpacing: 20,
-        mainAxisSpacing: 20,
+      child: Row(
         children: [
-          _buildBarChart(),
-          _buildLineChart(),
-          _buildRadarChart(),
-          _buildPieChart(),
+          Expanded(child: _buildBarChart()),
+          SizedBox(width: 20),
+          Expanded(child: _buildLineChart()),
         ],
       ),
     );
@@ -131,7 +137,8 @@ class InventoryPage extends StatelessWidget {
 
   Widget _buildBarChart() {
     return Card(
-      elevation: 2,
+      color: Colors.white,
+      elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -140,7 +147,7 @@ class InventoryPage extends StatelessWidget {
           children: [
             Text(
               'Order Overview',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
             Expanded(
@@ -151,12 +158,14 @@ class InventoryPage extends StatelessWidget {
                       x: 0,
                       barRods: [
                         BarChartRodData(
-                          toY: 8, // Updated to match the latest API
+                          toY: 8,
                           color: Colors.lightBlueAccent,
+                          width: 10,
                         ),
                         BarChartRodData(
-                          toY: 12, // Updated to match the latest API
+                          toY: 12,
                           color: Colors.blue,
+                          width: 10,
                         ),
                       ],
                     ),
@@ -164,12 +173,14 @@ class InventoryPage extends StatelessWidget {
                       x: 1,
                       barRods: [
                         BarChartRodData(
-                          toY: 10, // Updated to match the latest API
+                          toY: 10,
                           color: Colors.lightBlueAccent,
+                          width: 10,
                         ),
                         BarChartRodData(
-                          toY: 16, // Updated to match the latest API
+                          toY: 16,
                           color: Colors.blue,
+                          width: 10,
                         ),
                       ],
                     ),
@@ -177,16 +188,47 @@ class InventoryPage extends StatelessWidget {
                       x: 2,
                       barRods: [
                         BarChartRodData(
-                          toY: 14, // Updated to match the latest API
+                          toY: 14,
                           color: Colors.lightBlueAccent,
+                          width: 10,
                         ),
                         BarChartRodData(
-                          toY: 18, // Updated to match the latest API
+                          toY: 18,
                           color: Colors.blue,
+                          width: 10,
                         ),
                       ],
                     ),
                   ],
+                  borderData: FlBorderData(
+                    show: true,
+                    border: Border.all(color: Colors.grey.shade300, width: 1),
+                  ),
+                  titlesData: FlTitlesData(
+                    show: true,
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (double value, TitleMeta meta) {
+                          return Text(
+                            value.toInt().toString(),
+                            style: TextStyle(color: Colors.black, fontSize: 10),
+                          );
+                        },
+                      ),
+                    ),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (double value, TitleMeta meta) {
+                          return Text(
+                            value.toInt().toString(),
+                            style: TextStyle(color: Colors.black, fontSize: 10),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -198,7 +240,8 @@ class InventoryPage extends StatelessWidget {
 
   Widget _buildLineChart() {
     return Card(
-      elevation: 2,
+      color: Colors.white,
+      elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -207,17 +250,41 @@ class InventoryPage extends StatelessWidget {
           children: [
             Text(
               'Sales Overview',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
             Expanded(
               child: LineChart(
                 LineChartData(
-                  gridData: FlGridData(show: false),
-                  titlesData: FlTitlesData(show: false),
+                  gridData: FlGridData(show: true),
+                  titlesData: FlTitlesData(
+                    show: true,
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (double value, TitleMeta meta) {
+                          return Text(
+                            value.toInt().toString(),
+                            style: TextStyle(color: Colors.black, fontSize: 10),
+                          );
+                        },
+                      ),
+                    ),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (double value, TitleMeta meta) {
+                          return Text(
+                            value.toInt().toString(),
+                            style: TextStyle(color: Colors.black, fontSize: 10),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
                   borderData: FlBorderData(
                     show: true,
-                    border: Border.all(color: Colors.grey, width: 1),
+                    border: Border.all(color: Colors.grey.shade300, width: 1),
                   ),
                   minX: 0,
                   maxX: 4,
@@ -233,130 +300,8 @@ class InventoryPage extends StatelessWidget {
                         FlSpot(4, 3),
                       ],
                       isCurved: true,
-                      color: Colors.orange, // Updated to match the latest API
+                      color: Colors.orange,
                       dotData: FlDotData(show: false),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRadarChart() {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Order Overview',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-            Expanded(
-              child: RadarChart(
-                RadarChartData(
-                  radarShape: RadarShape.circle,
-                  dataSets: [
-                    RadarDataSet(
-                      dataEntries: [
-                        RadarEntry(value: 4),
-                        RadarEntry(value: 3),
-                        RadarEntry(value: 5),
-                        RadarEntry(value: 2),
-                        RadarEntry(value: 4),
-                      ],
-                      fillColor: Colors.blueAccent.withOpacity(0.3),
-                    ),
-                    RadarDataSet(
-                      dataEntries: [
-                        RadarEntry(value: 2),
-                        RadarEntry(value: 2),
-                        RadarEntry(value: 3),
-                        RadarEntry(value: 1),
-                        RadarEntry(value: 2),
-                      ],
-                      fillColor: Colors.greenAccent.withOpacity(0.3),
-                    ),
-                  ],
-                  radarBorderData: BorderSide(color: Colors.grey),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPieChart() {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Order by Channel',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-            Expanded(
-              child: PieChart(
-                PieChartData(
-                  sections: [
-                    PieChartSectionData(
-                      value: 30,
-                      color: Colors.blueAccent,
-                      title: 'Amazon',
-                      radius: 50,
-                      titleStyle: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    PieChartSectionData(
-                      value: 20,
-                      color: Colors.orangeAccent,
-                      title: 'eBay',
-                      radius: 50,
-                      titleStyle: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    PieChartSectionData(
-                      value: 25,
-                      color: Colors.greenAccent,
-                      title: 'Shopify',
-                      radius: 50,
-                      titleStyle: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    PieChartSectionData(
-                      value: 25,
-                      color: Colors.redAccent,
-                      title: 'Others',
-                      radius: 50,
-                      titleStyle: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
                     ),
                   ],
                 ),

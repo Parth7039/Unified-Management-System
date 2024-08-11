@@ -32,39 +32,60 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0,
+        elevation: 2,
+        titleSpacing: 0,
         leading: IconButton(
           icon: Icon(isDrawerOpen ? Icons.close : Icons.menu, color: Colors.black),
           onPressed: _toggleDrawer,
         ),
-        title: Container(
-          width: 200, // Adjust width to your preference
-          height: 40,
-          child: TextField(
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(vertical: 10),
-              hintText: 'Search...',
-              prefixIcon: Icon(Icons.search, color: Colors.grey),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
-              filled: true,
-              fillColor: Colors.grey[200],
+        title: Row(
+          children: [
+            IconButton(
+              icon: Icon(Icons.add_circle_outline, color: Colors.green),
+              onPressed: () {
+                // Handle the + action
+              },
             ),
-          ),
+            SizedBox(width: 10),
+            Expanded(
+              child: Container(
+                height: 40,
+                child: TextField(
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(vertical: 10),
+                    hintText: 'Search...',
+                    prefixIcon: Icon(Icons.search, color: Colors.grey),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications, color: Colors.black),
+            icon: Icon(Icons.notifications_none, color: Colors.black),
             onPressed: () {
               // Handle notifications action
             },
           ),
+          IconButton(
+            icon: Icon(Icons.calendar_today_outlined, color: Colors.black),
+            onPressed: () {
+              // Handle calendar action
+            },
+          ),
           CircleAvatar(
-            backgroundImage: AssetImage('assets/profile.jpg'), // Replace with your asset path
+            backgroundImage: NetworkImage('https://media.licdn.com/dms/image/D5603AQHbXUt-RZ_BMw/profile-displayphoto-shrink_400_400/0/1699965188678?e=1729123200&v=beta&t=sjmPmTRnKsvmD2C8Fbp1XJj4aZFlsL64H7rA1T0cngU'), // Replace with your image URL
             radius: 15,
           ),
+          SizedBox(width: 10),
+          Text("Gaurav Desale"),
           SizedBox(width: 10),
         ],
       ),
@@ -73,7 +94,7 @@ class _HomePageState extends State<HomePage> {
           AnimatedContainer(
             duration: Duration(milliseconds: 300),
             width: drawerWidth,
-            color: Colors.blue,
+            color: Color(0xFF344675), // Matching color from the provided image
             child: Column(
               children: [
                 Expanded(
