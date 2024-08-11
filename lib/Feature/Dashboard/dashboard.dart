@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../Contracts/contracts.dart';
+import 'package:ums/homepage.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -14,116 +13,92 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF8697C4),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: (){
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+        },),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Row(
+        child: Column(
           children: [
-            // CustomContainer(),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Card(
+                  elevation: 5,
+                  child: Container(
+                    height: 120,
+                    width: 300,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black,width: 1),
+                      borderRadius: BorderRadius.circular(13)
+                    ),
+                    child: Column(
                       children: [
-                        Container(
-                          height: 120,
-                          width: 250,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: Colors.black,
-                              width: 2
-                            )
-                          ),
-                        ),
-                        Container(
-                          height: 120,
-                          width: 250,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                  color: Colors.black,
-                                  width: 2
-                              )
-                          ),
-                        ),
-                        Container(
-                          height: 120,
-                          width: 250,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                  color: Colors.black,
-                                  width: 2
-                              )
-                          ),
-                        ),
-                        Container(
-                          height: 120,
-                          width: 250,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                  color: Colors.black,
-                                  width: 2
-                              )
-                          ),
-                        ),
+                        Text('Active Contracts',style: TextStyle(fontWeight: FontWeight.bold),),
+                        SizedBox(height: 10,),
+                        Text('5',style: TextStyle(fontSize: 35),)
                       ],
                     ),
-                    SizedBox(height: 15,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          height: 400,
-                          width: 270,
-                          decoration: BoxDecoration(
-                            color: Color(0xFF5B5B5B),
-                            borderRadius: BorderRadius.circular(10)
-                          ),
-                          child: Column(
-                            children: [
-                              Text('Your Checklist',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),)
-                            ],
-                          ),
-                        ),
-                        Container(
-                          height: 400,
-                          width: 1000,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(width: 1,color: Colors.black)
-                          ),
-                          child: Center(
-                            child: Text('This is a graph'),
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 15,),
-                    Row(
-                      children: [
-                        Container(
-                          width: 300,
-                          height: 400,
-                          decoration: BoxDecoration(
-                            border: Border.all(width: 2,color: Colors.black),
-                            borderRadius: BorderRadius.circular(10)
-                          ),
-                        )
-                      ],
-                    )
-                  ],
+                  )
                 ),
-              ),
+                Card(
+                  elevation: 5,
+                  child: Container(
+                    height: 120,
+                    width: 300,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black,width: 1),
+                      borderRadius: BorderRadius.circular(13)
+                    ),
+                    child: Column(
+                      children: [
+                        Text('Inactive Contracts',style: TextStyle(fontWeight: FontWeight.bold),),
+                        SizedBox(height: 10,),
+                        Text('5',style: TextStyle(fontSize: 35),)
+                      ],
+                    ),
+                  )
+                ),
+                Card(
+                  elevation: 5,
+                  child: Container(
+                    height: 120,
+                    width: 300,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black,width: 1),
+                      borderRadius: BorderRadius.circular(13)
+                    ),
+                    child: Column(
+                      children: [
+                        Text('Completed Contracts',style: TextStyle(fontWeight: FontWeight.bold),),
+                        SizedBox(height: 10,),
+                        Text('7',style: TextStyle(fontSize: 35),)
+                      ],
+                    ),
+                  )
+                ),
+                Card(
+                  elevation: 5,
+                  child: Container(
+                    height: 120,
+                    width: 300,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black,width: 1),
+                      borderRadius: BorderRadius.circular(13)
+                    ),
+                    child: Column(
+                      children: [
+                        Text('Total Contracts',style: TextStyle(fontWeight: FontWeight.bold),),
+                        SizedBox(height: 10,),
+                        Text('15',style: TextStyle(fontSize: 35),)
+                      ],
+                    ),
+                  )
+                ),
+              ],
             )
           ],
         ),
