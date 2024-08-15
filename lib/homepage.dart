@@ -12,6 +12,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool isDrawerOpen = true;
   double drawerWidth = 250; // Initial drawer width when open
+  Widget selectedPage = DashboardPage(); // Default page when app starts
 
   void _toggleDrawer() {
     setState(() {
@@ -21,10 +22,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _navigateTo(Widget page) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => page),
-    );
+    setState(() {
+      selectedPage = page; // Set the selected page and rebuild the UI
+    });
   }
 
   @override
@@ -124,7 +124,7 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: DashboardPage(), // Default page when app starts
+              child: selectedPage, // Display the selected page
             ),
           ),
         ],
