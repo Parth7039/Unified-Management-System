@@ -124,7 +124,7 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: InventoryPage(), // Default page when app starts
+              child: DashboardPage(), // Default page when app starts
             ),
           ),
         ],
