@@ -55,7 +55,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     ),
                     child: Column(
                       children: [
-                        Text('Inactive Contracts',style: TextStyle(fontWeight: FontWeight.bold),),
+                        Text('Completed Contracts',style: TextStyle(fontWeight: FontWeight.bold),),
                         SizedBox(height: 10,),
                         Text('5',style: TextStyle(fontSize: 35),)
                       ],
@@ -73,9 +73,9 @@ class _DashboardPageState extends State<DashboardPage> {
                     ),
                     child: Column(
                       children: [
-                        Text('Completed Contracts',style: TextStyle(fontWeight: FontWeight.bold),),
+                        Text('Total Purchase',style: TextStyle(fontWeight: FontWeight.bold),),
                         SizedBox(height: 10,),
-                        Text('7',style: TextStyle(fontSize: 35),)
+                        Text('₹40,000',style: TextStyle(fontSize: 35),)
                       ],
                     ),
                   )
@@ -91,9 +91,9 @@ class _DashboardPageState extends State<DashboardPage> {
                     ),
                     child: Column(
                       children: [
-                        Text('Total Contracts',style: TextStyle(fontWeight: FontWeight.bold),),
+                        Text('Total Sales',style: TextStyle(fontWeight: FontWeight.bold),),
                         SizedBox(height: 10,),
-                        Text('15',style: TextStyle(fontSize: 35),)
+                        Text('₹90,000',style: TextStyle(fontSize: 35),)
                       ],
                     ),
                   )
@@ -152,6 +152,15 @@ class _DashboardPageState extends State<DashboardPage> {
                         ),
                       ],
                     )
+                  ),
+                ),
+                SizedBox(width: 15,),
+                Container(
+                  height: 450,
+                  width: 380,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.black)
                   ),
                 )
               ],

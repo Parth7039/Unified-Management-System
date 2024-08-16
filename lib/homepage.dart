@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ums/Feature/Contracts/contracts.dart';
 
 import 'Feature/Dashboard/dashboard.dart';
 import 'Screens/InventoryPage.dart';
@@ -106,8 +107,8 @@ class _HomePageState extends State<HomePage> {
                       _buildDrawerItem(Icons.inventory, 'Inventory', () {
                         _navigateTo(InventoryPage()); // Navigate to Inventory page
                       }),
-                      _buildDrawerItem(Icons.person, 'Profile', () {
-                        // Add navigation for Profile page
+                      _buildDrawerItem(Icons.add_task_rounded, 'Contracts', () {
+                        _navigateTo(ContractsPage()); // Navigate to contracts page
                       }),
                       _buildDrawerItem(Icons.settings, 'Settings', () {
                         // Add navigation for Settings page
