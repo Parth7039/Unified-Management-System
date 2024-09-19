@@ -84,7 +84,75 @@ class _NewInventoryState extends State<NewInventory> {
               },
               child: Text('Save'),
               style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: Colors.blueAccent,
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blueAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _addItem() {
+    // This function can be implemented to add a new item to the inventory.
+    showDialog(
+      context: context,
+      builder: (context) {
+        TextEditingController nameController = TextEditingController();
+        TextEditingController descriptionController = TextEditingController();
+        TextEditingController modelController = TextEditingController();
+        TextEditingController quantityController = TextEditingController();
+
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          title: Text(
+            'Add Item',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.blueAccent,
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildTextField(nameController, 'Name'),
+                _buildTextField(descriptionController, 'Description'),
+                _buildTextField(modelController, 'Model'),
+                _buildTextField(quantityController, 'Quantity',
+                    inputType: TextInputType.number),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  inventory.add({
+                    'name': nameController.text,
+                    'description': descriptionController.text,
+                    'model': modelController.text,
+                    'quantity': int.tryParse(quantityController.text) ?? 0,
+                  });
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text('Add'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blueAccent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                 ),
@@ -120,56 +188,78 @@ class _NewInventoryState extends State<NewInventory> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Inventory List'),
+        title: Text('Inventory Grid'),
         backgroundColor: Colors.white,
       ),
-      body: ListView.builder(
-        itemCount: inventory.length,
-        itemBuilder: (context, index) {
-          return Card(
-            margin: EdgeInsets.all(10.0),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            elevation: 4.0,
-            child: ListTile(
-              contentPadding:
-              EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-              title: Text(
-                inventory[index]['name'],
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18.0,
-                ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4, // Number of columns in the grid
+            crossAxisSpacing: 8.0,
+            mainAxisSpacing: 8.0,
+            childAspectRatio: 4 / 2, // Aspect ratio of each grid item
+          ),
+          itemCount: inventory.length,
+          itemBuilder: (context, index) {
+            final item = inventory[index];
+
+            return Card(
+              elevation: 4.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
               ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Stack(
                 children: [
-                  SizedBox(height: 5.0),
-                  Text(
-                    'Description: ${inventory[index]['description']}',
-                    style: TextStyle(color: Colors.grey[700]),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item['name'],
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0,
+                          ),
+                        ),
+                        SizedBox(height: 8.0),
+                        Text(
+                          'Description: ${item['description']}',
+                          style: TextStyle(color: Colors.grey[700]),
+                        ),
+                        Text(
+                          'Model: ${item['model']}',
+                          style: TextStyle(color: Colors.grey[700]),
+                        ),
+                        Text(
+                          'Quantity: ${item['quantity']}',
+                          style: TextStyle(color: Colors.grey[700]),
+                        ),
+                      ],
+                    ),
                   ),
-                  Text(
-                    'Model: ${inventory[index]['model']}',
-                    style: TextStyle(color: Colors.grey[700]),
-                  ),
-                  Text(
-                    'Quantity: ${inventory[index]['quantity']}',
-                    style: TextStyle(color: Colors.grey[700]),
+                  Positioned(
+                    right: 8.0,
+                    top: 8.0,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.edit,
+                        color: Colors.blueAccent,
+                      ),
+                      onPressed: () => _editItem(index),
+                    ),
                   ),
                 ],
               ),
-              trailing: IconButton(
-                icon: Icon(
-                  Icons.edit,
-                  color: Colors.blueAccent,
-                ),
-                onPressed: () => _editItem(index),
-              ),
-            ),
-          );
-        },
+            );
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addItem,
+        child: Icon(Icons.add),
+        backgroundColor: Colors.blueAccent,
       ),
     );
   }
