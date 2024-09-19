@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ums/Feature/Contracts/contracts.dart';
 import 'package:ums/Screens/NewInventory.dart';
+import 'package:ums/Screens/inventory_grid.dart';
 
 import 'Feature/Dashboard/dashboard.dart';
 import 'Screens/InventoryPage.dart';
@@ -112,7 +113,7 @@ class _HomePageState extends State<HomePage> {
                         _navigateTo(ContractsPage()); // Navigate to contracts page
                       }),
                       _buildDrawerItem(Icons.settings, 'Settings', () {
-                        _navigateTo(NewInventory()); // Navigate to contracts page
+                        _navigateTo(Inventory_Grid()); // Navigate to contracts page
                       }),
                       _buildDrawerItem(Icons.logout, 'Logout', () {
                         // Handle logout
