@@ -13,20 +13,23 @@ class ContractsPage extends StatefulWidget {
 class _ContractsPageState extends State<ContractsPage> {
   TextEditingController _startdateController = TextEditingController();
   TextEditingController _enddateController = TextEditingController();
-  String? contractType; // Default value for radio buttons
-  String? contractStatus; // Default value for radio buttons
 
+  // Selected filters (if any)
+  String? contractType; // "Government" or "Private"
+  String? contractStatus; // "Active", "Inactive", "Completed"
+
+  // Sample list of contracts
   List<Contract> contracts = [
     Contract(
-      name: 'Contract 1',
-      details: 'Details about contract 1',
-      duration: '6 months',
-      additionalTerms: 'Term 1',
+      name: 'Sapphire Heights',
+      details: 'Complete electrical wiring of wing A & B',
+      duration: '2 months',
+      additionalTerms: 'None for now',
       startDate: DateTime.now(),
       endDate: DateTime.now().add(Duration(days: 180)),
       partyName: 'Party A',
       partyContact: '1234567890',
-      contractType: 'Government',
+      contractType: 'Private',
       contractStatus: 'Active',
     ),
     Contract(
@@ -38,10 +41,9 @@ class _ContractsPageState extends State<ContractsPage> {
       endDate: DateTime.now().add(Duration(days: 365)),
       partyName: 'Party B',
       partyContact: '0987654321',
-      contractType: 'Private',
+      contractType: 'Government',
       contractStatus: 'Inactive',
     ),
-    // Add more contracts as needed
   ];
 
   List<Contract> filteredContracts = [];
@@ -145,7 +147,7 @@ class _ContractsPageState extends State<ContractsPage> {
                               filteredContracts = List.from(contracts);
                             } else {
                               filteredContracts = contracts.where((contract) =>
-                              contract.name.toLowerCase().contains(value.toLowerCase()) ||
+                                  contract.name.toLowerCase().contains(value.toLowerCase()) ||
                                   contract.details.toLowerCase().contains(value.toLowerCase()) ||
                                   contract.partyName.toLowerCase().contains(value.toLowerCase()))
                                   .toList();
@@ -156,7 +158,7 @@ class _ContractsPageState extends State<ContractsPage> {
                     ),
                     // Contracts List
                     Container(
-                      height: 600,
+                      height: 600, // Adjust based on your UI needs
                       child: ListView.builder(
                         itemCount: filteredContracts.length,
                         itemBuilder: (context, index) {
@@ -179,7 +181,7 @@ class _ContractsPageState extends State<ContractsPage> {
     return contracts.where((contract) => contract.contractStatus == status).length.toString();
   }
 
-  // Contract Card Widget
+  // Helper method to build contract summary cards
   Widget _buildContractCard(String title, String count) {
     return Card(
       elevation: 5,
@@ -208,7 +210,7 @@ class _ContractsPageState extends State<ContractsPage> {
     );
   }
 
-  // Contract ListTile Widget
+  // Helper method to build each contract list tile
   Widget _buildContractListTile(Contract contract) {
     Color statusColor;
     switch (contract.contractStatus) {
@@ -266,33 +268,36 @@ class _ContractsPageState extends State<ContractsPage> {
             context,
             MaterialPageRoute(
               builder: (context) => ContractDetailsPage(
-                title: '', subtitle: '', statusColor: statusColor,
+                title: contract.name,
+                subtitle: contract.details,
+                statusColor: statusColor,
+                duration: contract.duration,
+                additional_terms: contract.additionalTerms,
+                startdate: contract.startDate,
+                enddate: contract.endDate,
+                contract_type: contract.contractType,
               ),
             ),
           );
-        },
-        onLongPress: () {
-          _showEditDialog(contract);
         },
       ),
     );
   }
 
-  // Date Formatter
+  // Helper method to format dates as YYYY-MM-DD
   String _formatDate(DateTime date) {
     return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
   }
 
-  // Custom Text Field Widget
+  // Custom Text Field Widget for reuse
   Widget customTextField(
-      String labelText,
-      String hintText, {
-        required TextEditingController controller,
-        bool isPassword = false,
-        TextInputType keyboardType = TextInputType.text,
-      }) {
+    String labelText,
+    String hintText, {
+    required TextEditingController controller,
+    bool isPassword = false,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
     return Container(
-      // Make the width responsive based on screen size
       width: MediaQuery.of(context).size.width * 0.4, // 40% of screen width
       child: TextField(
         controller: controller,
@@ -309,17 +314,15 @@ class _ContractsPageState extends State<ContractsPage> {
           prefixIcon: isPassword ? Icon(Icons.lock, color: Colors.black) : null,
           suffixIcon: isPassword
               ? IconButton(
-            icon: Icon(
-              // Toggle password visibility
-              controller.text.isEmpty
-                  ? Icons.visibility_off
-                  : Icons.visibility,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              // Implement visibility toggle if needed
-            },
-          )
+                  icon: Icon(
+                    // Toggle password visibility (if needed)
+                    controller.text.isEmpty ? Icons.visibility_off : Icons.visibility,
+                    color: Colors.black,
+                  ),
+                  onPressed: () {
+                    // Implement visibility toggle if needed
+                  },
+                )
               : null,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
@@ -342,9 +345,10 @@ class _ContractsPageState extends State<ContractsPage> {
     );
   }
 
-
-  // Add Contract Dialog
+  // Add Contract Dialog with Switch for Contract Type
+  // Add Contract Dialog with Switch for Contract Type
   Widget alertDialog() {
+    // Controllers for input fields
     TextEditingController nameController = TextEditingController();
     TextEditingController detailsController = TextEditingController();
     TextEditingController durationController = TextEditingController();
@@ -354,8 +358,9 @@ class _ContractsPageState extends State<ContractsPage> {
     TextEditingController startDateController = TextEditingController();
     TextEditingController endDateController = TextEditingController();
 
-    String? selectedContractType;
-    String? selectedContractStatus;
+    String? selectedContractType; // "Government" or "Private"
+    String? selectedContractStatus; // "Active", "Inactive", "Completed"
+    bool isGovernment = false; // New variable to track contract type
 
     return AlertDialog(
       backgroundColor: Colors.white,
@@ -367,6 +372,26 @@ class _ContractsPageState extends State<ContractsPage> {
               width: MediaQuery.of(context).size.width * 0.9, // Responsive width
               child: Column(
                 children: [
+                  SizedBox(height: 35,),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('Contract Type', style: TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold)),
+                  ),
+                  SwitchListTile(
+                    title: Text(isGovernment ? "Government" : "Private"),
+                    value: isGovernment,
+                    onChanged: (bool value) {
+                      setState(() {
+                        isGovernment = value;
+                        selectedContractType =
+                        isGovernment ? "Government" : "Private";
+                      });
+                    },
+                    secondary: Icon(
+                        isGovernment ? Icons.account_balance : Icons
+                            .person),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -377,23 +402,26 @@ class _ContractsPageState extends State<ContractsPage> {
                           SizedBox(height: 20),
                           customTextField('Contract Details', 'Enter details here..', controller: detailsController),
                           SizedBox(height: 20),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: GestureDetector(
-                              onTap: () {
-                                _selectStartDate(context, controller: startDateController);
-                              },
-                              child: AbsorbPointer(
-                                child: Container(
-                                  width: 420,
-                                  child: TextField(
-                                    controller: startDateController,
-                                    readOnly: true,
-                                    decoration: InputDecoration(
-                                      labelText: 'Start Date',
-                                      prefixIcon: Icon(Icons.calendar_today),
-                                      enabledBorder: OutlineInputBorder(),
-                                      focusedBorder: OutlineInputBorder(),
+                          GestureDetector(
+                            onTap: () {
+                              _selectStartDate(context, controller: startDateController);
+                            },
+                            child: AbsorbPointer(
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.4, // Responsive width
+                                child: TextField(
+                                  controller: startDateController,
+                                  readOnly: true,
+                                  decoration: InputDecoration(
+                                    labelText: 'Start Date',
+                                    prefixIcon: Icon(Icons.calendar_today),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: BorderSide(color: Colors.black),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: BorderSide(color: Colors.black),
                                     ),
                                   ),
                                 ),
@@ -409,23 +437,26 @@ class _ContractsPageState extends State<ContractsPage> {
                           SizedBox(height: 20),
                           customTextField('Additional Terms', 'Enter additional terms here..', controller: additionalTermsController),
                           SizedBox(height: 20),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: GestureDetector(
-                              onTap: () {
-                                _selectEndDate(context, controller: endDateController);
-                              },
-                              child: AbsorbPointer(
-                                child: Container(
-                                  width: 420,
-                                  child: TextField(
-                                    controller: endDateController,
-                                    readOnly: true,
-                                    decoration: InputDecoration(
-                                      labelText: 'End Date',
-                                      prefixIcon: Icon(Icons.calendar_today),
-                                      enabledBorder: OutlineInputBorder(),
-                                      focusedBorder: OutlineInputBorder(),
+                          GestureDetector(
+                            onTap: () {
+                              _selectEndDate(context, controller: endDateController);
+                            },
+                            child: AbsorbPointer(
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.4, // Responsive width
+                                child: TextField(
+                                  controller: endDateController,
+                                  readOnly: true,
+                                  decoration: InputDecoration(
+                                    labelText: 'End Date',
+                                    prefixIcon: Icon(Icons.calendar_today),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: BorderSide(color: Colors.black),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: BorderSide(color: Colors.black),
                                     ),
                                   ),
                                 ),
@@ -437,44 +468,29 @@ class _ContractsPageState extends State<ContractsPage> {
                     ],
                   ),
                   SizedBox(height: 20),
-                  Text('Party Details', style: TextStyle(fontSize: 30)),
-                  SizedBox(height: 10),
-                  Row(
+                  // Party Details
+                  isGovernment ? Container() : Column(
                     children: [
-                      SizedBox(width: 15),
-                      customTextField('Party Name', 'Enter name here..', controller: partyNameController),
-                      SizedBox(width: 30),
-                      customTextField('Party Contact', 'Enter contact here..', controller: partyContactController),
-                    ],
-                  ),
-                  SizedBox(height: 5),
-                  Text('Contract Type', style: TextStyle(fontSize: 30)),
-                  Column(
-                    children: [
-                      RadioListTile(
-                        value: "Government",
-                        groupValue: selectedContractType,
-                        title: Text("Government"),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedContractType = value as String?;
-                          });
-                        },
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('Party Details', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       ),
-                      RadioListTile(
-                        value: "Private",
-                        groupValue: selectedContractType,
-                        title: Text("Private"),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedContractType = value as String?;
-                          });
-                        },
+                      SizedBox(height: 10),
+                      Row(
+                        children: [
+                          SizedBox(width: 15),
+                          customTextField('Party Name', 'Enter name here..', controller: partyNameController),
+                          SizedBox(width: 30),
+                          customTextField('Party Contact', 'Enter contact here..', controller: partyContactController),
+                        ],
                       ),
                     ],
                   ),
-                  SizedBox(height: 15),
-                  Text('Contract Status', style: TextStyle(fontSize: 30)),
+                  SizedBox(height: 20),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('Contract Status', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  ),
                   Column(
                     children: [
                       RadioListTile(
@@ -516,32 +532,38 @@ class _ContractsPageState extends State<ContractsPage> {
         ),
       ),
       actions: <Widget>[
+        // Cancel Button
         TextButton(
           child: Text('Cancel'),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
+        // Add Button
         TextButton(
           child: Text('Add'),
           onPressed: () {
+            // Retrieve current state of the dialog
+            final dialogState = context as Element;
+            final StatefulBuilder? builder = dialogState.findAncestorWidgetOfExactType<StatefulBuilder>();
+
+            // Validate input fields
             if (nameController.text.isEmpty ||
                 detailsController.text.isEmpty ||
                 durationController.text.isEmpty ||
                 startDateController.text.isEmpty ||
                 endDateController.text.isEmpty ||
-                partyNameController.text.isEmpty ||
-                partyContactController.text.isEmpty ||
+                (isGovernment == false && (partyNameController.text.isEmpty || partyContactController.text.isEmpty)) ||
                 selectedContractType == null ||
                 selectedContractStatus == null) {
-              // Show error or handle accordingly
+              // Show error message
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Please fill all fields')),
               );
               return;
             }
 
-            // Optional: Validate dates
+            // Validate dates
             DateTime? startDate = DateTime.tryParse(startDateController.text);
             DateTime? endDate = DateTime.tryParse(endDateController.text);
             if (startDate == null || endDate == null) {
@@ -564,10 +586,10 @@ class _ContractsPageState extends State<ContractsPage> {
               details: detailsController.text,
               duration: durationController.text,
               additionalTerms: additionalTermsController.text,
-              startDate: startDate,
-              endDate: endDate,
-              partyName: partyNameController.text,
-              partyContact: partyContactController.text,
+              startDate: startDate!,
+              endDate: endDate!,
+              partyName: isGovernment ? '' : partyNameController.text,
+              partyContact: isGovernment ? '' : partyContactController.text,
               contractType: selectedContractType!,
               contractStatus: selectedContractStatus!,
             );
@@ -578,8 +600,10 @@ class _ContractsPageState extends State<ContractsPage> {
               filteredContracts = List.from(contracts); // Reset filtered list
             });
 
+            // Close the dialog
             Navigator.of(context).pop();
 
+            // Show success message
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Contract added successfully')),
             );
@@ -589,6 +613,7 @@ class _ContractsPageState extends State<ContractsPage> {
     );
   }
 
+  // Method to select start date
   Future<void> _selectStartDate(BuildContext context, {required TextEditingController controller}) async {
     final DateTime? picked1 = await showDatePicker(
       context: context,
@@ -604,11 +629,19 @@ class _ContractsPageState extends State<ContractsPage> {
     }
   }
 
+  // Method to select end date
   Future<void> _selectEndDate(BuildContext context, {required TextEditingController controller}) async {
+    DateTime initialDate;
+    if (_startdateController.text.isEmpty) {
+      initialDate = DateTime.now();
+    } else {
+      initialDate = DateTime.tryParse(_startdateController.text) ?? DateTime.now();
+    }
+
     final DateTime? picked2 = await showDatePicker(
       context: context,
-      initialDate: controller.text.isEmpty ? DateTime.now() : DateTime.parse(controller.text),
-      firstDate: DateTime(2000),
+      initialDate: controller.text.isEmpty ? initialDate.add(Duration(days: 1)) : DateTime.parse(controller.text),
+      firstDate: initialDate,
       lastDate: DateTime(2400),
     );
 
@@ -616,11 +649,12 @@ class _ContractsPageState extends State<ContractsPage> {
       setState(() {
         controller.text = _formatDate(picked2);
       });
-    };
+    }
   }
 
-  // Edit Contract Dialog (Completed)
+  // Edit Contract Dialog with Switch for Contract Type
   void _showEditDialog(Contract contract) {
+    // Controllers initialized with existing contract data
     TextEditingController nameController = TextEditingController(
         text: contract.name);
     TextEditingController detailsController = TextEditingController(
@@ -641,270 +675,5 @@ class _ContractsPageState extends State<ContractsPage> {
     String? selectedContractType = contract.contractType;
     String? selectedContractStatus = contract.contractStatus;
 
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return AlertDialog(
-                backgroundColor: Colors.white,
-                title: Center(child: Text('Edit Contract')),
-                content: SingleChildScrollView(
-                  child: Container(
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width * 0.9, // Responsive width
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            // Left Column
-                            Column(
-                              children: [
-                                customTextField(
-                                    'Contract Name', 'Enter name here..',
-                                    controller: nameController),
-                                SizedBox(height: 20),
-                                customTextField(
-                                    'Contract Details', 'Enter details here..',
-                                    controller: detailsController),
-                                SizedBox(height: 20),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      _selectStartDate(context,
-                                          controller: startDateController);
-                                    },
-                                    child: AbsorbPointer(
-                                      child: Container(
-                                        width: 420,
-                                        child: TextField(
-                                          controller: startDateController,
-                                          readOnly: true,
-                                          decoration: InputDecoration(
-                                            labelText: 'Start Date',
-                                            prefixIcon: Icon(
-                                                Icons.calendar_today),
-                                            enabledBorder: OutlineInputBorder(),
-                                            focusedBorder: OutlineInputBorder(),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            // Right Column
-                            Column(
-                              children: [
-                                customTextField('Contract Duration',
-                                    'Enter duration here..',
-                                    controller: durationController),
-                                SizedBox(height: 20),
-                                customTextField('Additional Terms',
-                                    'Enter additional terms here..',
-                                    controller: additionalTermsController),
-                                SizedBox(height: 20),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      _selectEndDate(context,
-                                          controller: endDateController);
-                                    },
-                                    child: AbsorbPointer(
-                                      child: Container(
-                                        width: 420,
-                                        child: TextField(
-                                          controller: endDateController,
-                                          readOnly: true,
-                                          decoration: InputDecoration(
-                                            labelText: 'End Date',
-                                            prefixIcon: Icon(
-                                                Icons.calendar_today),
-                                            enabledBorder: OutlineInputBorder(),
-                                            focusedBorder: OutlineInputBorder(),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 20),
-                        Text('Party Details', style: TextStyle(fontSize: 30)),
-                        SizedBox(height: 10),
-                        Row(
-                          children: [
-                            SizedBox(width: 15),
-                            customTextField('Party Name', 'Enter name here..',
-                                controller: partyNameController),
-                            SizedBox(width: 30),
-                            customTextField(
-                                'Party Contact', 'Enter contact here..',
-                                controller: partyContactController),
-                          ],
-                        ),
-                        SizedBox(height: 5),
-                        Text('Contract Type', style: TextStyle(fontSize: 30)),
-                        Column(
-                          children: [
-                            RadioListTile(
-                              value: "Government",
-                              groupValue: selectedContractType,
-                              title: Text("Government"),
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedContractType = value as String?;
-                                });
-                              },
-                            ),
-                            RadioListTile(
-                              value: "Private",
-                              groupValue: selectedContractType,
-                              title: Text("Private"),
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedContractType = value as String?;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 15),
-                        Text('Contract Status', style: TextStyle(fontSize: 30)),
-                        Column(
-                          children: [
-                            RadioListTile(
-                              value: "Active",
-                              groupValue: selectedContractStatus,
-                              title: Text("Active"),
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedContractStatus = value as String?;
-                                });
-                              },
-                            ),
-                            RadioListTile(
-                              value: "Inactive",
-                              groupValue: selectedContractStatus,
-                              title: Text("Inactive"),
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedContractStatus = value as String?;
-                                });
-                              },
-                            ),
-                            RadioListTile(
-                              value: "Completed",
-                              groupValue: selectedContractStatus,
-                              title: Text("Completed"),
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedContractStatus = value as String?;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text('Cancel'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  TextButton(
-                    child: Text('Save'),
-                    onPressed: () {
-                      // Validate input
-                      if (nameController.text.isEmpty ||
-                          detailsController.text.isEmpty ||
-                          durationController.text.isEmpty ||
-                          startDateController.text.isEmpty ||
-                          endDateController.text.isEmpty ||
-                          partyNameController.text.isEmpty ||
-                          partyContactController.text.isEmpty ||
-                          selectedContractType == null ||
-                          selectedContractStatus == null) {
-                        // Show error or handle accordingly
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Please fill all fields')),
-                        );
-                        return;
-                      }
-
-                      // Optional: Validate dates
-                      DateTime? startDate = DateTime.tryParse(
-                          startDateController.text);
-                      DateTime? endDate = DateTime.tryParse(
-                          endDateController.text);
-                      if (startDate == null || endDate == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Invalid dates')),
-                        );
-                        return;
-                      }
-
-                      if (endDate.isBefore(startDate)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(
-                              'End Date must be after Start Date')),
-                        );
-                        return;
-                      }
-
-                      // Find the index of the contract in the contracts list
-                      int index = contracts.indexOf(contract);
-                      if (index != -1) {
-                        setState(() {
-                          // Update the contract
-                          contracts[index] = Contract(
-                            name: nameController.text,
-                            details: detailsController.text,
-                            duration: durationController.text,
-                            additionalTerms: additionalTermsController.text,
-                            startDate: startDate,
-                            endDate: endDate,
-                            partyName: partyNameController.text,
-                            partyContact: partyContactController.text,
-                            contractType: selectedContractType!,
-                            contractStatus: selectedContractStatus!,
-                          );
-
-                          // Update the filtered list
-                          filteredContracts = List.from(contracts);
-                        });
-
-                        Navigator.of(context).pop();
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(
-                              'Contract updated successfully')),
-                        );
-                      } else {
-                        // Handle contract not found
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Contract not found')),
-                        );
-                      }
-                    },
-                  ),
-                ],
-              );
-            },
-          );
-        });
   }
-  }
+}
