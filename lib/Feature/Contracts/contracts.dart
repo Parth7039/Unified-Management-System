@@ -477,10 +477,9 @@ class _ContractsPageState extends State<ContractsPage> {
                       ),
                       SizedBox(height: 10),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          SizedBox(width: 15),
                           customTextField('Party Name', 'Enter name here..', controller: partyNameController),
-                          SizedBox(width: 30),
                           customTextField('Party Contact', 'Enter contact here..', controller: partyContactController),
                         ],
                       ),
