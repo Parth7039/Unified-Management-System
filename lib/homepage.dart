@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ums/Feature/Contracts/contracts.dart';
+import 'package:ums/Feature/Invoice/add_invoice.dart';
 import 'package:ums/Screens/NewInventory.dart';
 import 'package:ums/Screens/inventory_grid.dart';
 
@@ -115,8 +116,8 @@ class _HomePageState extends State<HomePage> {
                       _buildDrawerItem(Icons.settings, 'Settings', () {
                         _navigateTo(Inventory_Grid()); // Navigate to contracts page
                       }),
-                      _buildDrawerItem(Icons.logout, 'Logout', () {
-                        // Handle logout
+                      _buildDrawerItem(Icons.receipt_long, 'Billing', () {
+                        _navigateTo(AddinvoicePage());
                       }),
                     ],
                   ),
