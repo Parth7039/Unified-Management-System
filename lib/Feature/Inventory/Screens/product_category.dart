@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ums/Screens/NewInventory.dart';
+import 'package:ums/Feature/Inventory/Screens/product.dart';
 
 class Inventory_Grid extends StatefulWidget {
   const Inventory_Grid({super.key});

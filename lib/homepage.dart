@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ums/Feature/Contracts/contracts.dart';
 import 'package:ums/Feature/Invoice/add_invoice.dart';
-import 'package:ums/Screens/NewInventory.dart';
-import 'package:ums/Screens/inventory_grid.dart';
+import 'package:ums/Feature/Inventory/Screens/product.dart';
+import 'package:ums/Feature/Inventory/Screens/product_category.dart';
 
 import 'Feature/Dashboard/dashboard.dart';
 import 'Screens/InventoryPage.dart';
