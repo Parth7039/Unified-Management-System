@@ -8,10 +8,35 @@ class AddinvoicePage extends StatefulWidget {
 }
 
 class _AddinvoicePageState extends State<AddinvoicePage> {
+  // Controllers for text fields
+  TextEditingController descController = TextEditingController();
+  TextEditingController quantityController = TextEditingController();
+  TextEditingController rateController = TextEditingController();
+  TextEditingController hsnController = TextEditingController();
+  TextEditingController perController = TextEditingController();
 
-  TextEditingController Desccontroller = TextEditingController();
-  TextEditingController quantitycontroller = TextEditingController();
-  TextEditingController ratecontroller = TextEditingController();
+  // List to store added items
+  List<Map<String, String>> addedItems = [];
+
+  // Function to add item to the list
+  void addItem() {
+    setState(() {
+      addedItems.add({
+        'description': descController.text,
+        'quantity': quantityController.text,
+        'rate': rateController.text,
+        'hsn': hsnController.text,
+        'per': perController.text,
+      });
+
+      // Clear the text fields after adding the item
+      descController.clear();
+      quantityController.clear();
+      rateController.clear();
+      hsnController.clear();
+      perController.clear();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,41 +44,133 @@ class _AddinvoicePageState extends State<AddinvoicePage> {
       backgroundColor: Colors.white,
       body: Row(
         children: [
-
-          Expanded(child: customContainer(
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('Add Item',style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold),),
-                ),
-                customTextField('Description', 'Enter product Description', controller: Desccontroller),
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: customTextField('Quantity', 'Enter quantity', controller: quantitycontroller),
+          // Left column: Add Item form
+          Expanded(
+            child: customContainer(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Add Item',
+                      style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: customTextField('Rate', 'Enter Rate', controller: ratecontroller),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: customTextField(
+                      'Description',
+                      'Enter product description',
+                      controller: descController,
                     ),
-                  ],
-                ),
-              ],
-            )
-          )),
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: customTextField(
+                          'Quantity',
+                          'Enter quantity',
+                          controller: quantityController,
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: customTextField(
+                          'Rate',
+                          'Enter rate',
+                          controller: rateController,
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: customTextField(
+                          'HSN Code',
+                          'Enter code',
+                          controller: hsnController,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: customTextField(
+                          'Per',
+                          'Enter unit',
+                          controller: perController,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 15),
+                  Center(
+                    child: SizedBox(
+                      height: 50,
+                      width: 300,
+                      child: ElevatedButton(
+                        onPressed: addItem,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                        ),
+                        child: Text(
+                          'Add Item',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
 
-          Expanded(child: customContainer(
-              Text('Add Item',style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold),)
-          )),
-
+          // Right column: Preview box
+          Expanded(
+            child: customContainer(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Preview',
+                      style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: addedItems.length,
+                      itemBuilder: (context, index) {
+                        final item = addedItems[index];
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            child: ListTile(
+                              title: Text(item['description']!),
+                              subtitle: Text(
+                                'Quantity: ${item['quantity']} | Rate: ${item['rate']} | HSN: ${item['hsn']} | Per: ${item['per']}',
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
+  // Custom TextField widget
   Widget customTextField(
       String label,
       String hintText, {
@@ -64,9 +181,12 @@ class _AddinvoicePageState extends State<AddinvoicePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
+        Text(
+          label,
+          style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+        ),
         Container(
-          width: MediaQuery.of(context).size.width * 0.222, // 40% of screen width
+          width: MediaQuery.of(context).size.width * 0.18, // 40% of screen width
           child: TextField(
             controller: controller,
             obscureText: isPassword,
@@ -77,19 +197,6 @@ class _AddinvoicePageState extends State<AddinvoicePage> {
               fillColor: Colors.white,
               hintText: hintText,
               hintStyle: TextStyle(color: Colors.grey),
-              prefixIcon: isPassword ? Icon(Icons.lock, color: Colors.black) : null,
-              suffixIcon: isPassword
-                  ? IconButton(
-                icon: Icon(
-                  // Toggle password visibility (if needed)
-                  controller.text.isEmpty ? Icons.visibility_off : Icons.visibility,
-                  color: Colors.black,
-                ),
-                onPressed: () {
-                  // Implement visibility toggle if needed
-                },
-              )
-                  : null,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
               ),
@@ -103,7 +210,8 @@ class _AddinvoicePageState extends State<AddinvoicePage> {
     );
   }
 
-  Widget customContainer(Widget def_child){
+  // Custom container widget for layout consistency
+  Widget customContainer(Widget defChild) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -112,9 +220,8 @@ class _AddinvoicePageState extends State<AddinvoicePage> {
           color: Colors.purple.shade50,
           borderRadius: BorderRadius.circular(15),
         ),
-        child: def_child,
+        child: defChild,
       ),
     );
   }
-
 }
