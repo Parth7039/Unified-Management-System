@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ums/Feature/Invoice/buyer_details.dart';
 
 class AddinvoicePage extends StatefulWidget {
   const AddinvoicePage({super.key});
@@ -48,6 +49,13 @@ class _AddinvoicePageState extends State<AddinvoicePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.black,
+        child: Text('Next',style: TextStyle(color: Colors.white),),
+          onPressed: (){
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BuyerdetailsPage()));
+          },
+      ),
       body: Row(
         children: [
           // Left column: Add Item form
