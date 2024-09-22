@@ -38,6 +38,12 @@ class _AddinvoicePageState extends State<AddinvoicePage> {
     });
   }
 
+  void deleteitem(int index){
+    setState(() {
+      addedItems.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -155,6 +161,7 @@ class _AddinvoicePageState extends State<AddinvoicePage> {
                               subtitle: Text(
                                 'Quantity: ${item['quantity']} | Rate: ${item['rate']} | HSN: ${item['hsn']} | Per: ${item['per']}',
                               ),
+                              trailing: IconButton(onPressed: (){deleteitem(index);}, icon: Icon(Icons.delete)),
                             ),
                           ),
                         );
