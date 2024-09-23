@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ums/Feature/Inventory/Models/product_category_model.dart';
 import 'package:ums/Feature/Inventory/Screens/product.dart';
+import 'package:ums/Feature/Inventory/Services/product_services.dart';
 
 class Inventory_Grid extends StatefulWidget {
   const Inventory_Grid({super.key});
@@ -9,33 +11,21 @@ class Inventory_Grid extends StatefulWidget {
 }
 
 class _Inventory_GridState extends State<Inventory_Grid> {
-  final List<Map<String, String?>> inventory = [
-    {
-      'name': 'Switch',
-      'description': 'Electrical switch used to control devices.',
-      'image': 'https://5.imimg.com/data5/ZV/SX/SI/SELLER-9071585/finoswitch-500x500.png',
-    },
-    {
-      'name': 'Router',
-      'description': 'Device that forwards data between networks.',
-      'image': 'https://5.imimg.com/data5/ZV/SX/SI/SELLER-9071585/finoswitch-500x500.png',
-    },
-    {
-      'name': 'Cable',
-      'description': 'Electrical wire for connections.',
-      'image': 'https://5.imimg.com/data5/ZV/SX/SI/SELLER-9071585/finoswitch-500x500.png',
-    },
-    {
-      'name': 'Light Bulb',
-      'description': 'Device to emit light in a room.',
-      'image': 'https://5.imimg.com/data5/ZV/SX/SI/SELLER-9071585/finoswitch-500x500.png',
-    },
-    {
-      'name': 'Sensor',
-      'description': 'Device used for detecting changes in the environment.',
-      'image': 'https://5.imimg.com/data5/ZV/SX/SI/SELLER-9071585/finoswitch-500x500.png',
-    },
-  ];
+  
+  List<ProductCategory> inventory = [];
+  final ProductService productService = ProductService();
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchCategories();
+  }
+
+  fetchCategories()async{
+    await productService.getCategories();
+  }
 
   void _showAddItemDialog() {
     final TextEditingController nameController = TextEditingController();
@@ -49,9 +39,9 @@ class _Inventory_GridState extends State<Inventory_Grid> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15.0),
           ),
-          title: Text(
+          title: const Text(
             'Add New Item',
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.blueAccent,
             ),
@@ -71,7 +61,7 @@ class _Inventory_GridState extends State<Inventory_Grid> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -79,20 +69,20 @@ class _Inventory_GridState extends State<Inventory_Grid> {
                     descriptionController.text.isNotEmpty &&
                     imageController.text.isNotEmpty) {
                   setState(() {
-                    inventory.add({
-                      'name': nameController.text,
-                      'description': descriptionController.text,
-                      'image': imageController.text,
-                    });
+                    // inventory.add({
+                    //   'name': nameController.text,
+                    //   'description': descriptionController.text,
+                    //   'image': imageController.text,
+                    // });
                   });
                   Navigator.of(context).pop();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please fill all fields')),
+                    const SnackBar(content: Text('Please fill all fields')),
                   );
                 }
               },
-              child: Text('Add'),
+              child: const Text('Add'),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.blueAccent,
@@ -167,9 +157,10 @@ class _Inventory_GridState extends State<Inventory_Grid> {
                   children: [
                     // Displaying image from the internet with fallback handling
                     Expanded(
-                      child: item['image'] != null
+                      // ignore: unnecessary_null_comparison
+                      child: item.categoryImageUrl != null
                           ? Image.network(
-                        item['image']!,
+                        item.categoryImageUrl,
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
                           return const Icon(Icons.error); // Fallback if image fails to load
@@ -183,7 +174,7 @@ class _Inventory_GridState extends State<Inventory_Grid> {
                     ),
                     const SizedBox(height: 8.0),
                     Text(
-                      item['name'] ?? 'Unknown', // Fallback for null name
+                      item.categoryName ?? 'Unknown', // Fallback for null name
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16.0,
@@ -191,7 +182,7 @@ class _Inventory_GridState extends State<Inventory_Grid> {
                     ),
                     const SizedBox(height: 4.0),
                     Text(
-                      item['description'] ?? 'No description available', // Fallback for null description
+                      item.categoryDescription ?? 'No description available', // Fallback for null description
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 12.0,

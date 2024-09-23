@@ -7,14 +7,17 @@ class ProductService {
 
   // Fetch all categories
   Future<List<ProductCategory>> getCategories() async {
+    List<ProductCategory> allcategories = [];
     final response = await http.get(Uri.parse(baseUrl));
 
     if (response.statusCode == 200) {
       List<dynamic> body = jsonDecode(response.body);
-      return body.map((dynamic item) => ProductCategory.fromJson(item)).toList();
+      print(body.toString());
+      allcategories = body.map((dynamic item) => ProductCategory.fromJson(item)).toList();
     } else {
       throw Exception('Failed to load categories');
     }
+    return allcategories;
   }
 
   // Fetch a category by ID
