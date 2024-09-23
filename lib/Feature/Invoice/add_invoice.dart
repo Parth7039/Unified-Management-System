@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ums/Feature/Invoice/buyer_details.dart';
+import 'package:ums/homepage.dart';
 
 class AddinvoicePage extends StatefulWidget {
   const AddinvoicePage({super.key});
@@ -48,6 +49,12 @@ class _AddinvoicePageState extends State<AddinvoicePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: IconButton(onPressed: (){
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+        }, icon: Icon(Icons.arrow_back_ios)),
+      ),
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.black,
@@ -59,88 +66,105 @@ class _AddinvoicePageState extends State<AddinvoicePage> {
       body: Row(
         children: [
           // Left column: Add Item form
-          Expanded(
-            child: customContainer(
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Add Item',
-                      style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: customTextField(
-                      'Description',
-                      'Enter product description',
-                      controller: descController,
-                    ),
-                  ),
-                  Row(
+          Column(
+            children: [
+              Expanded(
+                child: customContainer(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: customTextField(
-                          'Quantity',
-                          'Enter quantity',
-                          controller: quantityController,
-                          keyboardType: TextInputType.number,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: customTextField(
-                          'Rate',
-                          'Enter rate',
-                          controller: rateController,
-                          keyboardType: TextInputType.number,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: customTextField(
-                          'HSN Code',
-                          'Enter code',
-                          controller: hsnController,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: customTextField(
-                          'Per',
-                          'Enter unit',
-                          controller: perController,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 15),
-                  Center(
-                    child: SizedBox(
-                      height: 50,
-                      width: 300,
-                      child: ElevatedButton(
-                        onPressed: addItem,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                        ),
                         child: Text(
                           'Add Item',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                         ),
                       ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: customTextField(
+                          'Description',
+                          'Enter product description',
+                          controller: descController,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: customTextField(
+                              'Quantity',
+                              'Enter quantity',
+                              controller: quantityController,
+                              keyboardType: TextInputType.number,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: customTextField(
+                              'Rate',
+                              'Enter rate',
+                              controller: rateController,
+                              keyboardType: TextInputType.number,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: customTextField(
+                              'HSN Code',
+                              'Enter code',
+                              controller: hsnController,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: customTextField(
+                              'Per',
+                              'Enter unit',
+                              controller: perController,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 15),
+                      Center(
+                        child: SizedBox(
+                          height: 50,
+                          width: 300,
+                          child: ElevatedButton(
+                            onPressed: addItem,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black,
+                            ),
+                            child: Text(
+                              'Add Item',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+              Container(
+                height: 400,
+                width: 650,
+                decoration: BoxDecoration(
+                  color: Colors.purple.shade50,
+                  borderRadius: BorderRadius.circular(15)
+                ),
+                child: Column(
+                  children: [
+                    Text('Saved Data',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),)
+                  ],
+                ),
+              )
+            ],
           ),
 
           // Right column: Preview box
