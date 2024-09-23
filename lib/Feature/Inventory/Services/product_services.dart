@@ -3,22 +3,39 @@ import 'package:http/http.dart' as http;
 import '../Models/product_category_model.dart';
 
 class ProductService {
-  final String baseUrl = 'http://localhost:3000/categories'; // Your API URL
+  final String baseUrl = 'http://192.168.0.106:3000/categories'; // Your API URL
 
   // Fetch all categories
   Future<List<ProductCategory>> getCategories() async {
-    List<ProductCategory> allcategories = [];
-    final response = await http.get(Uri.parse(baseUrl));
+  List<ProductCategory> allCategories = [];
+  final response = await http.get(
+    Uri.parse(baseUrl),
+    headers: {
+      "Accept": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    },
+  );
 
-    if (response.statusCode == 200) {
-      List<dynamic> body = jsonDecode(response.body);
-      print(body.toString());
-      allcategories = body.map((dynamic item) => ProductCategory.fromJson(item)).toList();
+  if (response.statusCode == 200) {
+    // Parse the response as a Map
+    Map<String, dynamic> responseBody = jsonDecode(response.body);
+    
+    // Assuming the list of categories is under the 'data' key or another key
+    if (responseBody.containsKey('categories')) {
+      List<dynamic> categoryList = responseBody['categories'];
+      print(categoryList.toString());
+      allCategories = categoryList.map((dynamic item) => ProductCategory.fromJson(item)).toList();
     } else {
-      throw Exception('Failed to load categories');
+      throw Exception('Data key not found in the response');
     }
-    return allcategories;
+  } else {
+    throw Exception('Failed to load categories');
   }
+
+  return allCategories;
+}
+
+
 
   // Fetch a category by ID
   // Future<ProductCategory> getCategoryById(String id) async {
