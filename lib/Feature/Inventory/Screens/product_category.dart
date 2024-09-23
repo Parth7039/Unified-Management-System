@@ -24,9 +24,19 @@ class _Inventory_GridState extends State<Inventory_Grid> {
   }
 
   fetchCategories()async{
-    await productService.getCategories();
+    inventory = await productService.getCategories();
+    setState(() {
+    });
+    print(inventory.toString());
   }
 
+  createCategory(String catName,String catDesc,String imageUrl)async{
+    
+    ProductCategory cat = await productService.createCategory(ProductCategory(categoryName: catName, categoryDescription: catDesc, categoryImageUrl: imageUrl));
+    inventory = await productService.getCategories();
+    setState(() {
+    });
+  }
   void _showAddItemDialog() {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController descriptionController = TextEditingController();
@@ -41,7 +51,7 @@ class _Inventory_GridState extends State<Inventory_Grid> {
           ),
           title: const Text(
             'Add New Item',
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.blueAccent,
             ),
@@ -68,13 +78,7 @@ class _Inventory_GridState extends State<Inventory_Grid> {
                 if (nameController.text.isNotEmpty &&
                     descriptionController.text.isNotEmpty &&
                     imageController.text.isNotEmpty) {
-                  setState(() {
-                    // inventory.add({
-                    //   'name': nameController.text,
-                    //   'description': descriptionController.text,
-                    //   'image': imageController.text,
-                    // });
-                  });
+                  createCategory(nameController.text, descriptionController.text, imageController.text);
                   Navigator.of(context).pop();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(

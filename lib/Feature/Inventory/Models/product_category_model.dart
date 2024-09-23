@@ -15,9 +15,9 @@ class ProductCategory {
   factory ProductCategory.fromJson(Map<String, dynamic> json) {
     return ProductCategory(
       id: json['_id'],
-      categoryName: json['categoryName'],
-      categoryDescription: json['categorydesc'],
-      categoryImageUrl: json['categoryImageUrl'],
+      categoryName: json['categoryName'] ?? '',
+      categoryDescription: json['categorydesc'] ?? '',
+      categoryImageUrl: json['categoryImageUrl'] ?? '',
     );
   }
 
