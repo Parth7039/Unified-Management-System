@@ -17,10 +17,8 @@ class _AddinvoicePageState extends State<AddinvoicePage> {
   TextEditingController hsnController = TextEditingController();
   TextEditingController perController = TextEditingController();
 
-  // List to store added items
   List<Map<String, String>> addedItems = [];
 
-  // Function to add item to the list
   void addItem() {
     setState(() {
       addedItems.add({
@@ -31,7 +29,6 @@ class _AddinvoicePageState extends State<AddinvoicePage> {
         'per': perController.text,
       });
 
-      // Clear the text fields after adding the item
       descController.clear();
       quantityController.clear();
       rateController.clear();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ums/Feature/Invoice/add_invoice.dart';
+import 'package:ums/Feature/Invoice/print_invoice.dart';
 
 class BuyerdetailsPage extends StatefulWidget {
   const BuyerdetailsPage({super.key});
@@ -41,7 +42,20 @@ class _BuyerdetailsPageState extends State<BuyerdetailsPage> {
         width: 300,
         child: ElevatedButton(
           onPressed: () {
-            // Implement your Generate Invoice functionality here
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PrintInvoicePage(
+              consigneeName: consigneeController.text,
+              consigneeAddress: consignee_add_Controller.text,
+              consigneeGst: consignee_GST_Controller.text,
+              consigneeState: consignee_state_Controller.text,
+              buyerName: buyerController.text,
+              buyerAddress: buyer_add_Controller.text,
+              buyerGst: buyer_GST_Controller.text,
+              buyerState: buyer_state_Controller.text,
+              invoiceNo: invoicecontroller.text,
+              date: datedcontroller.text,
+              dispatchedThrough: dispatchedcontroller.text,
+              destination: destinationcontroller.text,
+            )));
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.black,
