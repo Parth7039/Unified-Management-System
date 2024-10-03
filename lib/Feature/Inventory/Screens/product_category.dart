@@ -86,7 +86,7 @@ class _Inventory_GridState extends State<Inventory_Grid> {
                   );
                 }
               },
-              child: const Text('Add'),
+              child: Text('Add'),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.blueAccent,
