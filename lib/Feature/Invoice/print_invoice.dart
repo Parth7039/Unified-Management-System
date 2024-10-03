@@ -21,8 +21,9 @@ class PrintInvoicePage extends StatefulWidget {
   final String dispatchedThrough;
   final String destination;
   final List<Map<String, String>> addedItems;
+  final double? totalAmount;
 
-  PrintInvoicePage({
+  const PrintInvoicePage({
     super.key,
     required this.consigneeName,
     required this.consigneeAddress,
@@ -37,6 +38,7 @@ class PrintInvoicePage extends StatefulWidget {
     required this.dispatchedThrough,
     required this.destination,
     required this.addedItems,
+    this.totalAmount,
   });
 
   @override
@@ -55,12 +57,17 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
           onPressed: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => BuyerdetailsPage(addedItems: [])),
+              MaterialPageRoute(
+                builder: (context) => BuyerdetailsPage(
+                  addedItems: const [],
+                  totalAmount: widget.totalAmount ?? 0.0, // Handle null case with default value
+                ),
+              ),
             );
           },
-          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
         ),
-        title: Text(
+        title: const Text(
           'Tax Invoice Preview',
           style: TextStyle(color: Colors.black),
         ),
@@ -68,7 +75,7 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
         elevation: 0,
         actions: [
           IconButton(
-            icon: Icon(Icons.print, color: Colors.black),
+            icon: const Icon(Icons.print, color: Colors.black),
             onPressed: () => _generateAndOpenPdf(),
           ),
         ],
@@ -76,24 +83,24 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
       body: RepaintBoundary(
         key: _printKey,
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               _buildSectionTitle('Consignee (Ship to)'),
               _buildConsigneeDetails(),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               _buildSectionTitle('Buyer (Bill to)'),
               _buildBuyerDetails(),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               _buildSectionTitle('Item Details'),
               _buildItemTable(),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               _buildSectionTitle('Tax Details'),
               _buildTaxTable(),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               _buildTotalSection(),
             ],
           ),
@@ -102,12 +109,13 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
     );
   }
 
+  // Build Header Section
   Widget _buildHeader() {
     return Row(
       children: [
         Expanded(
           child: customContainer(
-            Column(
+            const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -129,10 +137,10 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Invoice No: ${widget.invoiceNo}', style: TextStyle(fontWeight: FontWeight.bold)),
-                Text('Date: ${widget.date}', style: TextStyle(fontWeight: FontWeight.bold)),
-                Text('Dispatched Through: ${widget.dispatchedThrough}', style: TextStyle(fontSize: 12)),
-                Text('Destination: ${widget.destination}', style: TextStyle(fontSize: 12)),
+                Text('Invoice No: ${widget.invoiceNo}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text('Date: ${widget.date}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text('Dispatched Through: ${widget.dispatchedThrough}', style: const TextStyle(fontSize: 12)),
+                Text('Destination: ${widget.destination}', style: const TextStyle(fontSize: 12)),
               ],
             ),
           ),
@@ -141,20 +149,22 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
     );
   }
 
+  // Build Section Title
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.blueGrey),
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.blueGrey),
     );
   }
 
+  // Build Consignee Details
   Widget _buildConsigneeDetails() {
     return customContainer(
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('${widget.consigneeName}'),
-          Text('${widget.consigneeAddress}'),
+          Text(widget.consigneeName),
+          Text(widget.consigneeAddress),
           Text('GSTIN/UIN: ${widget.consigneeGst}'),
           Text('State: ${widget.consigneeState}'),
         ],
@@ -162,13 +172,14 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
     );
   }
 
+  // Build Buyer Details
   Widget _buildBuyerDetails() {
     return customContainer(
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('${widget.buyerName}'),
-          Text('${widget.buyerAddress}'),
+          Text(widget.buyerName),
+          Text(widget.buyerAddress),
           Text('GSTIN/UIN: ${widget.buyerGst}'),
           Text('State: ${widget.buyerState}'),
         ],
@@ -176,6 +187,7 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
     );
   }
 
+  // Build Item Table
   Widget _buildItemTable() {
     return customContainer(
       Column(
@@ -183,15 +195,16 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
           Table(
             border: TableBorder.all(),
             children: [
-              _buildTableHeaderRow(['Item', 'Quantity', 'Price', 'Total']),
+              _buildTableHeaderRow(['Description', 'HSN', 'Rate', 'Quantity', 'Total']),
               ...widget.addedItems.map((item) {
                 return _buildTableRow([
-                  item['name'] ?? 'N/A',
+                  item['description'] ?? 'N/A',
+                  item['hsn'] ?? '0',
+                  item['rate'] ?? '0',
                   item['quantity'] ?? '0',
-                  '\$${item['price'] ?? '0'}',
-                  '\$${(int.parse(item['quantity'] ?? '0') * double.parse(item['price'] ?? '0')).toString()}',
+                  '\$${(int.parse(item['quantity'] ?? '0') * double.parse(item['rate'] ?? '0')).toString()}',
                 ]);
-              }).toList(),
+              }),
             ],
           ),
         ],
@@ -199,7 +212,12 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
     );
   }
 
+  // Build Tax Table
   Widget _buildTaxTable() {
+    double totalTax = widget.totalAmount! * 0.18;
+    double cgst = totalTax / 2;
+    double sgst = totalTax / 2;
+
     return customContainer(
       Column(
         children: [
@@ -207,8 +225,8 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
             border: TableBorder.all(),
             children: [
               _buildTableHeaderRow(['Tax Type', 'Rate', 'Amount']),
-              _buildTableRow(['CGST', '9%', '\$9']),
-              _buildTableRow(['SGST', '9%', '\$9']),
+              _buildTableRow(['CGST', '9%', '\$$cgst']),
+              _buildTableRow(['SGST', '9%', '\$$sgst']),
             ],
           ),
         ],
@@ -216,29 +234,32 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
     );
   }
 
+  // Build Total Section
   Widget _buildTotalSection() {
     return customContainer(
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Total Amount', style: TextStyle(fontWeight: FontWeight.bold)),
-          Text('\$118 (Including Taxes)'),
+          const Text('Total Amount', style: TextStyle(fontWeight: FontWeight.bold)),
+          Text('\$${widget.totalAmount?.toStringAsFixed(2)} (Including Taxes)'),
         ],
       ),
     );
   }
 
+  // Table Row Builder
   TableRow _buildTableHeaderRow(List<String> headers) {
     return TableRow(
       children: headers.map((header) {
         return Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text(header, style: TextStyle(fontWeight: FontWeight.bold)),
+          child: Text(header, style: const TextStyle(fontWeight: FontWeight.bold)),
         );
       }).toList(),
     );
   }
 
+  // Table Data Row Builder
   TableRow _buildTableRow(List<String> cells) {
     return TableRow(
       children: cells.map((cell) {
@@ -250,10 +271,11 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
     );
   }
 
+  // Custom Container for Styling
   Widget customContainer(Widget child) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
-      padding: EdgeInsets.all(16.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(color: Colors.black, width: 1.5),
@@ -263,9 +285,22 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
     );
   }
 
+
   Future<void> _generateAndOpenPdf() async {
     try {
       final pdf = pw.Document();
+
+      // Calculate total amount for the items
+      double totalAmount = widget.addedItems.fold(0, (sum, item) {
+        int quantity = int.tryParse(item['quantity'] ?? '0') ?? 0;
+        double rate = double.tryParse(item['rate'] ?? '0') ?? 0;
+        return sum + (quantity * rate);
+      });
+
+      // Calculate tax amounts
+      double cgstAmount = totalAmount * 0.09;
+      double sgstAmount = totalAmount * 0.09;
+      double totalWithTax = totalAmount + cgstAmount + sgstAmount;
 
       // Add the header
       pdf.addPage(
@@ -281,9 +316,9 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
                         pw.Text('K B ELECTRIC COMPANY', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 18)),
-                        pw.Text('11 DEEPLAXMI CHS, MOHINDAR HIGHSCHOOL ROAD,\nAGRA ROAD KALYAN WEST, DIST: THANE', style: pw.TextStyle(fontSize: 12)),
-                        pw.Text('State: Maharashtra, Code: 27', style: pw.TextStyle(fontSize: 12)),
-                        pw.Text('E-mail: kbeco.2001@gmail.com', style: pw.TextStyle(fontSize: 12)),
+                        pw.Text('11 DEEPLAXMI CHS, MOHINDAR HIGHSCHOOL ROAD,\nAGRA ROAD KALYAN WEST, DIST: THANE', style: const pw.TextStyle(fontSize: 12)),
+                        pw.Text('State: Maharashtra, Code: 27', style: const pw.TextStyle(fontSize: 12)),
+                        pw.Text('E-mail: kbeco.2001@gmail.com', style: const pw.TextStyle(fontSize: 12)),
                       ],
                     ),
                     pw.Column(
@@ -291,8 +326,8 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
                       children: [
                         pw.Text('Invoice No: ${widget.invoiceNo}', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                         pw.Text('Date: ${widget.date}', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                        pw.Text('Dispatched Through: ${widget.dispatchedThrough}', style: pw.TextStyle(fontSize: 12)),
-                        pw.Text('Destination: ${widget.destination}', style: pw.TextStyle(fontSize: 12)),
+                        pw.Text('Dispatched Through: ${widget.dispatchedThrough}', style: const pw.TextStyle(fontSize: 12)),
+                        pw.Text('Destination: ${widget.destination}', style: const pw.TextStyle(fontSize: 12)),
                       ],
                     ),
                   ],
@@ -301,16 +336,16 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
 
                 // Consignee Details
                 pw.Text('Consignee (Ship to)', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14)),
-                pw.Text('${widget.consigneeName}'),
-                pw.Text('${widget.consigneeAddress}'),
+                pw.Text(widget.consigneeName),
+                pw.Text(widget.consigneeAddress),
                 pw.Text('GSTIN/UIN: ${widget.consigneeGst}'),
                 pw.Text('State: ${widget.consigneeState}'),
                 pw.SizedBox(height: 20),
 
                 // Buyer Details
                 pw.Text('Buyer (Bill to)', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14)),
-                pw.Text('${widget.buyerName}'),
-                pw.Text('${widget.buyerAddress}'),
+                pw.Text(widget.buyerName),
+                pw.Text(widget.buyerAddress),
                 pw.Text('GSTIN/UIN: ${widget.buyerGst}'),
                 pw.Text('State: ${widget.buyerState}'),
                 pw.SizedBox(height: 20),
@@ -324,7 +359,11 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
                       children: [
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8.0),
-                          child: pw.Text('Item', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          child: pw.Text('Description', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8.0),
+                          child: pw.Text('HSN', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8.0),
@@ -332,11 +371,11 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8.0),
-                          child: pw.Text('Price', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          child: pw.Text('Rate', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8.0),
-                          child: pw.Text('Total', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          child: pw.Text('Amount', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                         ),
                       ],
                     ),
@@ -345,7 +384,11 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
                         children: [
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8.0),
-                            child: pw.Text(item['name'] ?? 'N/A'),
+                            child: pw.Text(item['description'] ?? 'N/A'),
+                          ),
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(8.0),
+                            child: pw.Text(item['hsn'] ?? 'N/A'),
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8.0),
@@ -353,17 +396,28 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8.0),
-                            child: pw.Text('\$${item['price'] ?? '0'}'),
+                            child: pw.Text('Rs ${item['rate'] ?? '0'}'),
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8.0),
-                            child: pw.Text('\$${(int.parse(item['quantity'] ?? '0') * double.parse(item['price'] ?? '0')).toString()}'),
+                            child: pw.Text('Rs ${(int.parse(item['quantity'] ?? '0') * double.parse(item['rate'] ?? '0')).toString()}'),
                           ),
                         ],
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
+                pw.SizedBox(height: 10),
+
+                // Display Total Amount after item table
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.end,
+                  children: [
+                    pw.Text('Total Amount: ', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14)),
+                    pw.Text('Rs ${totalAmount.toStringAsFixed(2)}', style: const pw.TextStyle(fontSize: 14)),
+                  ],
+                ),
+
                 pw.SizedBox(height: 20),
 
                 // Tax Details Table
@@ -399,7 +453,7 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8.0),
-                          child: pw.Text('\$9'),
+                          child: pw.Text('Rs ${cgstAmount.toStringAsFixed(2)}'),
                         ),
                       ],
                     ),
@@ -415,7 +469,7 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8.0),
-                          child: pw.Text('\$9'),
+                          child: pw.Text('Rs ${sgstAmount.toStringAsFixed(2)}'),
                         ),
                       ],
                     ),
@@ -423,9 +477,8 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
                 ),
                 pw.SizedBox(height: 20),
 
-                // Total Amount
-                pw.Text('Total Amount', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14)),
-                pw.Text('\$118 (Including Taxes)'),
+                // Total Amount with taxes
+                pw.Text('Total Amount: Rs ${totalWithTax.toStringAsFixed(2)} (Including Taxes)', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14)),
               ],
             );
           },
@@ -460,7 +513,7 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
       return byteData!.buffer.asUint8List();
     } catch (e) {
       print("Error capturing widget as image: $e");
-      throw e;
+      rethrow;
     }
   }
 }

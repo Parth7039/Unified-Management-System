@@ -12,7 +12,7 @@ class ContractDetailsPage extends StatefulWidget {
   final String contract_type;
 
   const ContractDetailsPage({
-    Key? key,
+    super.key,
     required this.title,
     required this.subtitle,
     required this.statusColor,
@@ -21,7 +21,7 @@ class ContractDetailsPage extends StatefulWidget {
     required this.startdate,
     required this.enddate,
     required this.contract_type,
-  }) : super(key: key);
+  });
 
   @override
   State<ContractDetailsPage> createState() => _ContractDetailsPageState();
@@ -52,34 +52,34 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Edit Contract Details'),
+          title: const Text('Edit Contract Details'),
           content: SingleChildScrollView(
             child: Column(
               children: [
                 TextFormField(
                   initialValue: newTitle,
-                  decoration: InputDecoration(labelText: 'Title'),
+                  decoration: const InputDecoration(labelText: 'Title'),
                   onChanged: (value) {
                     newTitle = value;
                   },
                 ),
                 TextFormField(
                   initialValue: newSubtitle,
-                  decoration: InputDecoration(labelText: 'Subtitle'),
+                  decoration: const InputDecoration(labelText: 'Subtitle'),
                   onChanged: (value) {
                     newSubtitle = value;
                   },
                 ),
                 TextFormField(
                   initialValue: newDuration,
-                  decoration: InputDecoration(labelText: 'Duration'),
+                  decoration: const InputDecoration(labelText: 'Duration'),
                   onChanged: (value) {
                     newDuration = value;
                   },
                 ),
                 TextFormField(
                   initialValue: newAdditionalTerms,
-                  decoration: InputDecoration(labelText: 'Additional Terms'),
+                  decoration: const InputDecoration(labelText: 'Additional Terms'),
                   onChanged: (value) {
                     newAdditionalTerms = value;
                   },
@@ -92,7 +92,7 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog without saving
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
@@ -104,7 +104,7 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
                 });
                 Navigator.of(context).pop(); // Close the dialog after saving
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         );
@@ -118,12 +118,12 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.tealAccent,
         onPressed: _editDetails, // Open the edit dialog when button is pressed
-        child: Icon(Icons.edit, color: Colors.black),
+        child: const Icon(Icons.edit, color: Colors.black),
       ),
       appBar: AppBar(
         title: Text(
           title,
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: widget.statusColor,
       ),
@@ -139,11 +139,11 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
               decoration: BoxDecoration(
                 color: Colors.grey.shade800,
                 borderRadius: BorderRadius.circular(15),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(color: Colors.black54, blurRadius: 10, offset: Offset(0, 5)),
                 ],
               ),
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -152,7 +152,7 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
                     children: [
                       Text(
                         title,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -164,26 +164,26 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     subtitle,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 18,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     additionalTerms,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 18,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     duration,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 18,
                     ),
@@ -191,11 +191,11 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
                 ],
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             // Status Summary
             Container(
               width: double.infinity,
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.grey.shade700,
                 borderRadius: BorderRadius.circular(15),
@@ -203,18 +203,18 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     'Contract Type:',
                     style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     widget.contract_type,
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             // Material List
             Expanded(
               child: Container(
@@ -224,7 +224,7 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
                 ),
                 child: Column(
                   children: [
-                    ListTile(
+                    const ListTile(
                       title: Text(
                         'Materials',
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
@@ -248,7 +248,7 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             // Delete Button
             Center(
               child: ElevatedButton(
@@ -259,7 +259,7 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
                 onPressed: () {
                   // Implement delete functionality here
                 },
-                child: Text('Delete Contract', style: TextStyle(color: Colors.white)),
+                child: const Text('Delete Contract', style: TextStyle(color: Colors.white)),
               ),
             ),
           ],
@@ -271,8 +271,8 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
   // Helper method to build each material list tile
   Widget _buildMaterialTile(String materialName, String quantity) {
     return ListTile(
-      title: Text(materialName, style: TextStyle(color: Colors.white)),
-      trailing: Text(quantity, style: TextStyle(color: Colors.white)),
+      title: Text(materialName, style: const TextStyle(color: Colors.white)),
+      trailing: Text(quantity, style: const TextStyle(color: Colors.white)),
       tileColor: Colors.grey.shade600,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     );

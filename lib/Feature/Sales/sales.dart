@@ -5,6 +5,8 @@ import '../Inventory/Models/product_model.dart';
 import '../Inventory/Services/product_services.dart';
 
 class Salespreviewpage extends StatefulWidget {
+  const Salespreviewpage({super.key});
+
   @override
   _SalespreviewpageState createState() => _SalespreviewpageState();
 }
@@ -86,7 +88,7 @@ class _SalespreviewpageState extends State<Salespreviewpage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sales Page'),
+        title: const Text('Sales Page'),
         backgroundColor: Colors.black,
       ),
       body: SingleChildScrollView(
@@ -95,15 +97,15 @@ class _SalespreviewpageState extends State<Salespreviewpage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Input Section
-            Text('Buyer Name:', style: TextStyle(fontSize: 18)),
+            const Text('Buyer Name:', style: TextStyle(fontSize: 18)),
             TextField(
               controller: buyerController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Enter Buyer Name',
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             // Category Dropdown
             if (categories.isNotEmpty)
               DropdownButton<ProductCategory>(
@@ -121,7 +123,7 @@ class _SalespreviewpageState extends State<Salespreviewpage> {
                   });
                 },
               ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             // Item Dropdown
             if (inventory.isNotEmpty)
               DropdownButton<Product>(
@@ -138,33 +140,33 @@ class _SalespreviewpageState extends State<Salespreviewpage> {
                   });
                 },
               ),
-            SizedBox(height: 16),
-            Text('Item Quantity:', style: TextStyle(fontSize: 18)),
+            const SizedBox(height: 16),
+            const Text('Item Quantity:', style: TextStyle(fontSize: 18)),
             TextField(
               controller: itemQuantityController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Enter Item Quantity',
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: sellItem,
-              child: Text('Sell'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
               ),
+              child: const Text('Sell'),
             ),
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
 
             // Graph Section
-            Text('Sold Items (Week)', style: TextStyle(fontSize: 24)),
+            const Text('Sold Items (Week)', style: TextStyle(fontSize: 24)),
             SizedBox(
               height: 200,
               child: buildBarChart(),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Month Filter
             DropdownButton<int>(
@@ -183,12 +185,12 @@ class _SalespreviewpageState extends State<Salespreviewpage> {
             ),
 
             // Revenue Pie Chart
-            Text('Total Revenue (Monthly)', style: TextStyle(fontSize: 24)),
+            const Text('Total Revenue (Monthly)', style: TextStyle(fontSize: 24)),
             SizedBox(
               height: 200,
               child: buildPieChart(),
             ),
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
           ],
         ),
       ),
@@ -200,7 +202,7 @@ class _SalespreviewpageState extends State<Salespreviewpage> {
     return BarChart(
       BarChartData(
         titlesData: FlTitlesData(
-          leftTitles: AxisTitles(
+          leftTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: true),
           ),
           bottomTitles: AxisTitles(

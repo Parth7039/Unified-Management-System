@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class InventoryPage extends StatelessWidget {
+  const InventoryPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -10,7 +12,7 @@ class InventoryPage extends StatelessWidget {
         backgroundColor: Colors.white54,
         elevation: 2,
         titleSpacing: 0,
-        title: Text(
+        title: const Text(
           'Order Statistic',
           style: TextStyle(
             color: Colors.black,
@@ -20,12 +22,12 @@ class InventoryPage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.calendar_today_outlined, color: Colors.black),
+            icon: const Icon(Icons.calendar_today_outlined, color: Colors.black),
             onPressed: () {
               // Handle date picker or any other action
             },
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
         ],
       ),
       body: Padding(
@@ -34,7 +36,7 @@ class InventoryPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildStatisticsRow(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildCharts(),
           ],
         ),
@@ -80,7 +82,7 @@ class InventoryPage extends StatelessWidget {
     required String percentageChange,
     required Color color,
   }) {
-    return Container(
+    return SizedBox(
       width: 350,
       child: Card(
         color: Colors.white, // Match background color
@@ -99,7 +101,7 @@ class InventoryPage extends StatelessWidget {
                   color: Colors.grey[700],
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 value,
                 style: TextStyle(
@@ -108,7 +110,7 @@ class InventoryPage extends StatelessWidget {
                   color: color,
                 ),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
                 percentageChange,
                 style: TextStyle(
@@ -128,7 +130,7 @@ class InventoryPage extends StatelessWidget {
       child: Row(
         children: [
           Expanded(child: _buildBarChart()),
-          SizedBox(width: 20),
+          const SizedBox(width: 20),
           Expanded(child: _buildLineChart()),
         ],
       ),
@@ -145,11 +147,11 @@ class InventoryPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Order Overview',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Expanded(
               child: BarChart(
                 BarChartData(
@@ -212,7 +214,7 @@ class InventoryPage extends StatelessWidget {
                         getTitlesWidget: (double value, TitleMeta meta) {
                           return Text(
                             value.toInt().toString(),
-                            style: TextStyle(color: Colors.black, fontSize: 10),
+                            style: const TextStyle(color: Colors.black, fontSize: 10),
                           );
                         },
                       ),
@@ -223,7 +225,7 @@ class InventoryPage extends StatelessWidget {
                         getTitlesWidget: (double value, TitleMeta meta) {
                           return Text(
                             value.toInt().toString(),
-                            style: TextStyle(color: Colors.black, fontSize: 10),
+                            style: const TextStyle(color: Colors.black, fontSize: 10),
                           );
                         },
                       ),
@@ -248,15 +250,15 @@ class InventoryPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Sales Overview',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Expanded(
               child: LineChart(
                 LineChartData(
-                  gridData: FlGridData(show: true),
+                  gridData: const FlGridData(show: true),
                   titlesData: FlTitlesData(
                     show: true,
                     bottomTitles: AxisTitles(
@@ -265,7 +267,7 @@ class InventoryPage extends StatelessWidget {
                         getTitlesWidget: (double value, TitleMeta meta) {
                           return Text(
                             value.toInt().toString(),
-                            style: TextStyle(color: Colors.black, fontSize: 10),
+                            style: const TextStyle(color: Colors.black, fontSize: 10),
                           );
                         },
                       ),
@@ -276,7 +278,7 @@ class InventoryPage extends StatelessWidget {
                         getTitlesWidget: (double value, TitleMeta meta) {
                           return Text(
                             value.toInt().toString(),
-                            style: TextStyle(color: Colors.black, fontSize: 10),
+                            style: const TextStyle(color: Colors.black, fontSize: 10),
                           );
                         },
                       ),
@@ -293,15 +295,15 @@ class InventoryPage extends StatelessWidget {
                   lineBarsData: [
                     LineChartBarData(
                       spots: [
-                        FlSpot(0, 3),
-                        FlSpot(1, 4),
-                        FlSpot(2, 3),
-                        FlSpot(3, 5),
-                        FlSpot(4, 3),
+                        const FlSpot(0, 3),
+                        const FlSpot(1, 4),
+                        const FlSpot(2, 3),
+                        const FlSpot(3, 5),
+                        const FlSpot(4, 3),
                       ],
                       isCurved: true,
                       color: Colors.orange,
-                      dotData: FlDotData(show: false),
+                      dotData: const FlDotData(show: false),
                     ),
                   ],
                 ),

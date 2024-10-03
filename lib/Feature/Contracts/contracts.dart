@@ -11,8 +11,8 @@ class ContractsPage extends StatefulWidget {
 }
 
 class _ContractsPageState extends State<ContractsPage> {
-  TextEditingController _startdateController = TextEditingController();
-  TextEditingController _enddateController = TextEditingController();
+  final TextEditingController _startdateController = TextEditingController();
+  final TextEditingController _enddateController = TextEditingController();
 
   // Selected filters (if any)
   String? contractType; // "Government" or "Private"
@@ -26,7 +26,7 @@ class _ContractsPageState extends State<ContractsPage> {
       duration: '2 months',
       additionalTerms: 'None for now',
       startDate: DateTime.now(),
-      endDate: DateTime.now().add(Duration(days: 180)),
+      endDate: DateTime.now().add(const Duration(days: 180)),
       partyName: 'Party A',
       partyContact: '1234567890',
       contractType: 'Private',
@@ -38,7 +38,7 @@ class _ContractsPageState extends State<ContractsPage> {
       duration: '1 year',
       additionalTerms: 'Term 2',
       startDate: DateTime.now(),
-      endDate: DateTime.now().add(Duration(days: 365)),
+      endDate: DateTime.now().add(const Duration(days: 365)),
       partyName: 'Party B',
       partyContact: '0987654321',
       contractType: 'Government',
@@ -67,13 +67,13 @@ class _ContractsPageState extends State<ContractsPage> {
       backgroundColor: Colors.grey.shade900,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.tealAccent,
-        child: Icon(Icons.add, color: Colors.black),
+        child: const Icon(Icons.add, color: Colors.black),
         onPressed: () {
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,
             backgroundColor: Colors.black,
-            shape: RoundedRectangleBorder(
+            shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
             ),
             builder: (BuildContext context) {
@@ -85,15 +85,15 @@ class _ContractsPageState extends State<ContractsPage> {
       appBar: AppBar(
         backgroundColor: Colors.grey.shade900,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.tealAccent),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.tealAccent),
           onPressed: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => HomePage()),
+              MaterialPageRoute(builder: (context) => const HomePage()),
             );
           },
         ),
-        title: Text(
+        title: const Text(
           'Contracts',
           style: TextStyle(color: Colors.tealAccent, fontSize: 22),
         ),
@@ -116,7 +116,7 @@ class _ContractsPageState extends State<ContractsPage> {
                 ],
               ),
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             // Search and ListView
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -137,9 +137,9 @@ class _ContractsPageState extends State<ContractsPage> {
                           filled: true,
                           fillColor: Colors.grey.shade700,
                           hintText: 'Search contracts..',
-                          prefixIcon: Icon(Icons.search, color: Colors.tealAccent),
+                          prefixIcon: const Icon(Icons.search, color: Colors.tealAccent),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.tealAccent),
+                            borderSide: const BorderSide(color: Colors.tealAccent),
                             borderRadius: BorderRadius.circular(15),
                           ),
                           border: OutlineInputBorder(
@@ -147,7 +147,7 @@ class _ContractsPageState extends State<ContractsPage> {
                             borderSide: BorderSide(color: Colors.grey.shade800),
                           ),
                         ),
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                         onChanged: (value) {
                           setState(() {
                             if (value.isEmpty) {
@@ -164,7 +164,7 @@ class _ContractsPageState extends State<ContractsPage> {
                       ),
                     ),
                     // Contracts List
-                    Container(
+                    SizedBox(
                       height: 600, // Adjust based on your UI needs
                       child: ListView.builder(
                         itemCount: filteredContracts.length,
@@ -196,7 +196,7 @@ class _ContractsPageState extends State<ContractsPage> {
         height: 120,
         width: 190,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [Colors.teal, Colors.tealAccent],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -208,12 +208,12 @@ class _ContractsPageState extends State<ContractsPage> {
           children: [
             Text(
               title,
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               count,
-              style: TextStyle(fontSize: 35, color: Colors.white),
+              style: const TextStyle(fontSize: 35, color: Colors.white),
             ),
           ],
         ),
@@ -241,25 +241,25 @@ class _ContractsPageState extends State<ContractsPage> {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       color: Colors.grey.shade800,
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: ListTile(
-        contentPadding: EdgeInsets.all(16),
+        contentPadding: const EdgeInsets.all(16),
         title: Text(
           contract.name,
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               'Start: ${_formatDate(contract.startDate)}',
-              style: TextStyle(color: Colors.white70, fontSize: 14),
+              style: const TextStyle(color: Colors.white70, fontSize: 14),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               'End: ${_formatDate(contract.endDate)}',
-              style: TextStyle(color: Colors.white70, fontSize: 14),
+              style: const TextStyle(color: Colors.white70, fontSize: 14),
             ),
           ],
         ),
@@ -267,10 +267,10 @@ class _ContractsPageState extends State<ContractsPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.circle, color: statusColor),
-            SizedBox(height: 2),
+            const SizedBox(height: 2),
             Text(
               contract.contractStatus,
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -308,22 +308,22 @@ class _ContractsPageState extends State<ContractsPage> {
         bool isPassword = false,
         TextInputType keyboardType = TextInputType.text,
       }) {
-    return Container(
+    return SizedBox(
       width: MediaQuery.of(context).size.width * 0.4, // 40% of screen width
       child: TextField(
         controller: controller,
         obscureText: isPassword,
         keyboardType: keyboardType,
         cursorColor: Colors.tealAccent,
-        style: TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.white),
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.grey.shade700,
           hintText: hintText,
           labelText: labelText,
-          labelStyle: TextStyle(color: Colors.white),
-          hintStyle: TextStyle(color: Colors.grey),
-          prefixIcon: isPassword ? Icon(Icons.lock, color: Colors.tealAccent) : null,
+          labelStyle: const TextStyle(color: Colors.white),
+          hintStyle: const TextStyle(color: Colors.grey),
+          prefixIcon: isPassword ? const Icon(Icons.lock, color: Colors.tealAccent) : null,
           suffixIcon: isPassword
               ? IconButton(
             icon: Icon(
@@ -338,19 +338,19 @@ class _ContractsPageState extends State<ContractsPage> {
               : null,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(color: Colors.tealAccent),
+            borderSide: const BorderSide(color: Colors.tealAccent),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(color: Colors.tealAccent),
+            borderSide: const BorderSide(color: Colors.tealAccent),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(color: Colors.red),
+            borderSide: const BorderSide(color: Colors.red),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(color: Colors.red),
+            borderSide: const BorderSide(color: Colors.red),
           ),
         ),
       ),
@@ -376,16 +376,16 @@ class _ContractsPageState extends State<ContractsPage> {
 
     return AlertDialog(
       backgroundColor: Colors.white,
-      title: Center(child: Text('Add New Contract')),
+      title: const Center(child: Text('Add New Contract')),
       content: SingleChildScrollView(
         child: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
-            return Container(
+            return SizedBox(
               width: MediaQuery.of(context).size.width * 0.9, // Responsive width
               child: Column(
                 children: [
-                  SizedBox(height: 35,),
-                  Align(
+                  const SizedBox(height: 35,),
+                  const Align(
                     alignment: Alignment.centerLeft,
                     child: Text('Contract Type', style: TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold)),
@@ -411,29 +411,29 @@ class _ContractsPageState extends State<ContractsPage> {
                       Column(
                         children: [
                           customTextField('Contract Name', 'Enter name here..', controller: nameController),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           customTextField('Contract Details', 'Enter details here..', controller: detailsController),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           GestureDetector(
                             onTap: () {
                               _selectStartDate(context, controller: startDateController);
                             },
                             child: AbsorbPointer(
-                              child: Container(
+                              child: SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.4, // Responsive width
                                 child: TextField(
                                   controller: startDateController,
                                   readOnly: true,
                                   decoration: InputDecoration(
                                     labelText: 'Start Date',
-                                    prefixIcon: Icon(Icons.calendar_today),
+                                    prefixIcon: const Icon(Icons.calendar_today),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15),
-                                      borderSide: BorderSide(color: Colors.black),
+                                      borderSide: const BorderSide(color: Colors.black),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15),
-                                      borderSide: BorderSide(color: Colors.black),
+                                      borderSide: const BorderSide(color: Colors.black),
                                     ),
                                   ),
                                 ),
@@ -446,29 +446,29 @@ class _ContractsPageState extends State<ContractsPage> {
                       Column(
                         children: [
                           customTextField('Contract Duration', 'Enter duration here..', controller: durationController),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           customTextField('Additional Terms', 'Enter additional terms here..', controller: additionalTermsController),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           GestureDetector(
                             onTap: () {
                               _selectEndDate(context, controller: endDateController);
                             },
                             child: AbsorbPointer(
-                              child: Container(
+                              child: SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.4, // Responsive width
                                 child: TextField(
                                   controller: endDateController,
                                   readOnly: true,
                                   decoration: InputDecoration(
                                     labelText: 'End Date',
-                                    prefixIcon: Icon(Icons.calendar_today),
+                                    prefixIcon: const Icon(Icons.calendar_today),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15),
-                                      borderSide: BorderSide(color: Colors.black),
+                                      borderSide: const BorderSide(color: Colors.black),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15),
-                                      borderSide: BorderSide(color: Colors.black),
+                                      borderSide: const BorderSide(color: Colors.black),
                                     ),
                                   ),
                                 ),
@@ -479,15 +479,15 @@ class _ContractsPageState extends State<ContractsPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   // Party Details
                   isGovernment ? Container() : Column(
                     children: [
-                      Align(
+                      const Align(
                         alignment: Alignment.centerLeft,
                         child: Text('Party Details', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -497,8 +497,8 @@ class _ContractsPageState extends State<ContractsPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
-                  Align(
+                  const SizedBox(height: 20),
+                  const Align(
                     alignment: Alignment.centerLeft,
                     child: Text('Contract Status', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   ),
@@ -507,30 +507,30 @@ class _ContractsPageState extends State<ContractsPage> {
                       RadioListTile(
                         value: "Active",
                         groupValue: selectedContractStatus,
-                        title: Text("Active"),
+                        title: const Text("Active"),
                         onChanged: (value) {
                           setState(() {
-                            selectedContractStatus = value as String?;
+                            selectedContractStatus = value;
                           });
                         },
                       ),
                       RadioListTile(
                         value: "Inactive",
                         groupValue: selectedContractStatus,
-                        title: Text("Inactive"),
+                        title: const Text("Inactive"),
                         onChanged: (value) {
                           setState(() {
-                            selectedContractStatus = value as String?;
+                            selectedContractStatus = value;
                           });
                         },
                       ),
                       RadioListTile(
                         value: "Completed",
                         groupValue: selectedContractStatus,
-                        title: Text("Completed"),
+                        title: const Text("Completed"),
                         onChanged: (value) {
                           setState(() {
-                            selectedContractStatus = value as String?;
+                            selectedContractStatus = value;
                           });
                         },
                       ),
@@ -545,14 +545,14 @@ class _ContractsPageState extends State<ContractsPage> {
       actions: <Widget>[
         // Cancel Button
         TextButton(
-          child: Text('Cancel'),
+          child: const Text('Cancel'),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         // Add Button
         TextButton(
-          child: Text('Add'),
+          child: const Text('Add'),
           onPressed: () {
             // Retrieve current state of the dialog
             final dialogState = context as Element;
@@ -569,7 +569,7 @@ class _ContractsPageState extends State<ContractsPage> {
                 selectedContractStatus == null) {
               // Show error message
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Please fill all fields')),
+                const SnackBar(content: Text('Please fill all fields')),
               );
               return;
             }
@@ -579,14 +579,14 @@ class _ContractsPageState extends State<ContractsPage> {
             DateTime? endDate = DateTime.tryParse(endDateController.text);
             if (startDate == null || endDate == null) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Invalid dates')),
+                const SnackBar(content: Text('Invalid dates')),
               );
               return;
             }
 
             if (endDate.isBefore(startDate)) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('End Date must be after Start Date')),
+                const SnackBar(content: Text('End Date must be after Start Date')),
               );
               return;
             }
@@ -597,8 +597,8 @@ class _ContractsPageState extends State<ContractsPage> {
               details: detailsController.text,
               duration: durationController.text,
               additionalTerms: additionalTermsController.text,
-              startDate: startDate!,
-              endDate: endDate!,
+              startDate: startDate,
+              endDate: endDate,
               partyName: isGovernment ? '' : partyNameController.text,
               partyContact: isGovernment ? '' : partyContactController.text,
               contractType: selectedContractType!,
@@ -616,7 +616,7 @@ class _ContractsPageState extends State<ContractsPage> {
 
             // Show success message
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Contract added successfully')),
+              const SnackBar(content: Text('Contract added successfully')),
             );
           },
         ),
@@ -651,7 +651,7 @@ class _ContractsPageState extends State<ContractsPage> {
 
     final DateTime? picked2 = await showDatePicker(
       context: context,
-      initialDate: controller.text.isEmpty ? initialDate.add(Duration(days: 1)) : DateTime.parse(controller.text),
+      initialDate: controller.text.isEmpty ? initialDate.add(const Duration(days: 1)) : DateTime.parse(controller.text),
       firstDate: initialDate,
       lastDate: DateTime(2400),
     );
