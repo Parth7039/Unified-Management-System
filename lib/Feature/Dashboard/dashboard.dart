@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ums/homepage.dart';
+import 'package:fl_chart/fl_chart.dart'; // Import the chart library
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -28,7 +29,7 @@ class _DashboardPageState extends State<DashboardPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Overview', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
+            const Text('Overview', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black)),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -40,7 +41,112 @@ class _DashboardPageState extends State<DashboardPage> {
               ],
             ),
             const SizedBox(height: 20),
-            const Text('Ongoing Projects', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
+            const Text('Sales and Inventory Overview', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black)),
+            const SizedBox(height: 10),
+
+            // Row containing both Line Graph and Pie Chart
+            Row(
+              children: [
+                // Line Graph for Sales
+                Expanded(
+                  child: Container(
+                    height: 200,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF2C2C3E),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: LineChart(
+                      LineChartData(
+                        borderData: FlBorderData(show: true),
+                        gridData: FlGridData(show: true),
+                        titlesData: FlTitlesData(
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: true),
+                          ),
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: true),
+                          ),
+                        ),
+                        lineBarsData: [
+                          LineChartBarData(
+                            spots: [
+                              const FlSpot(0, 1),
+                              const FlSpot(1, 1.5),
+                              const FlSpot(2, 1.4),
+                              const FlSpot(3, 3.4),
+                              const FlSpot(4, 2.2),
+                              const FlSpot(5, 2.8),
+                              const FlSpot(6, 2.6),
+                            ],
+                            isCurved: true,
+                            color: Colors.orangeAccent,
+                            dotData: FlDotData(show: false),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16), // Space between the graphs
+
+                // Pie Chart for Inventory
+                Expanded(
+                  child: Container(
+                    height: 200,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF2C2C3E),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: PieChart(
+                      PieChartData(
+                        sections: [
+                          PieChartSectionData(
+                            value: 30,
+                            color: Colors.blue,
+                            title: '30%',
+                            radius: 60,
+                            titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                          PieChartSectionData(
+                            value: 25,
+                            color: Colors.red,
+                            title: '25%',
+                            radius: 60,
+                            titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                          PieChartSectionData(
+                            value: 20,
+                            color: Colors.green,
+                            title: '20%',
+                            radius: 60,
+                            titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                          PieChartSectionData(
+                            value: 15,
+                            color: Colors.orange,
+                            title: '15%',
+                            radius: 60,
+                            titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                          PieChartSectionData(
+                            value: 10,
+                            color: Colors.purple,
+                            title: '10%',
+                            radius: 60,
+                            titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+            const Text('Ongoing Projects', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black)),
             const SizedBox(height: 10),
             Expanded(
               child: Card(
