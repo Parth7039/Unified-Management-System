@@ -396,7 +396,7 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8.0),
-                            child: pw.Text('Rs ${item['rate'] ?? '0'}'),
+                            child: pw.Text('R ${item['rate'] ?? '0'}'),
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(8.0),
