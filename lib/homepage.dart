@@ -6,6 +6,7 @@ import 'package:ums/Feature/Inventory/Screens/product.dart';
 import 'package:ums/Feature/Inventory/Screens/product_category.dart';
 
 import 'Feature/Dashboard/dashboard.dart';
+import 'Feature/Sales/sales.dart';
 import 'Screens/InventoryPage.dart';
 
 class HomePage extends StatefulWidget {
@@ -35,17 +36,17 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 2,
+        backgroundColor: Colors.grey.shade900,
+        elevation: 4,
         titleSpacing: 0,
         leading: IconButton(
-          icon: Icon(isDrawerOpen ? Icons.close : Icons.menu, color: Colors.black),
+          icon: Icon(isDrawerOpen ? Icons.close : Icons.menu, color: Colors.white),
           onPressed: _toggleDrawer,
         ),
         title: Row(
           children: [
             IconButton(
-              icon: Icon(Icons.add_circle_outline, color: Colors.green),
+              icon: Icon(Icons.add_circle_outline, color: Colors.greenAccent),
               onPressed: () {
                 // Handle the + action
               },
@@ -58,13 +59,14 @@ class _HomePageState extends State<HomePage> {
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 10),
                     hintText: 'Search...',
+                    hintStyle: TextStyle(color: Colors.white70),
                     prefixIcon: Icon(Icons.search, color: Colors.grey),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide.none,
                     ),
                     filled: true,
-                    fillColor: Colors.grey[200],
+                    fillColor: Colors.grey[800],
                   ),
                 ),
               ),
@@ -73,23 +75,24 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications_none, color: Colors.black),
+            icon: Icon(Icons.notifications_none, color: Colors.white),
             onPressed: () {
               // Handle notifications action
             },
           ),
           IconButton(
-            icon: Icon(Icons.calendar_today_outlined, color: Colors.black),
+            icon: Icon(Icons.calendar_today_outlined, color: Colors.white),
             onPressed: () {
               // Handle calendar action
             },
           ),
           CircleAvatar(
-            backgroundImage: NetworkImage('https://media.licdn.com/dms/image/D5603AQHbXUt-RZ_BMw/profile-displayphoto-shrink_400_400/0/1699965188678?e=1729123200&v=beta&t=sjmPmTRnKsvmD2C8Fbp1XJj4aZFlsL64H7rA1T0cngU'), // Replace with your image URL
+            backgroundImage: NetworkImage(
+                'https://media.licdn.com/dms/image/D5603AQHbXUt-RZ_BMw/profile-displayphoto-shrink_400_400/0/1699965188678?e=1729123200&v=beta&t=sjmPmTRnKsvmD2C8Fbp1XJj4aZFlsL64H7rA1T0cngU'), // Replace with your image URL
             radius: 15,
           ),
           SizedBox(width: 10),
-          Text("Gaurav Desale"),
+          Text("Gaurav Desale", style: TextStyle(color: Colors.white)),
           SizedBox(width: 10),
         ],
       ),
@@ -98,27 +101,23 @@ class _HomePageState extends State<HomePage> {
           AnimatedContainer(
             duration: Duration(milliseconds: 300),
             width: drawerWidth,
-            color: Color(0xFF344675), // Matching color from the provided image
+            decoration: BoxDecoration(
+              color: Color(0xFF344675), // Drawer background color
+              borderRadius: BorderRadius.horizontal(right: Radius.circular(15)),
+            ),
             child: Column(
               children: [
+                SizedBox(height: 20), // Spacer for visual appeal
                 Expanded(
                   child: ListView(
+                    padding: EdgeInsets.zero,
                     children: [
-                      _buildDrawerItem(Icons.dashboard, 'Dashboard', () {
-                        _navigateTo(DashboardPage()); // Navigate to Dashboard page
-                      }),
-                      _buildDrawerItem(Icons.inventory, 'Inventory', () {
-                        _navigateTo(InventoryPage()); // Navigate to Inventory page
-                      }),
-                      _buildDrawerItem(Icons.add_task_rounded, 'Contracts', () {
-                        _navigateTo(ContractsPage()); // Navigate to contracts page
-                      }),
-                      _buildDrawerItem(Icons.settings, 'Settings', () {
-                        _navigateTo(Inventory_Grid()); // Navigate to contracts page
-                      }),
-                      _buildDrawerItem(Icons.receipt_long, 'Billing', () {
-                        _navigateTo(AddinvoicePage());
-                      }),
+                      _buildDrawerItem(Icons.dashboard, 'Dashboard', DashboardPage()),
+                      _buildDrawerItem(Icons.inventory, 'Inventory', InventoryPage()),
+                      _buildDrawerItem(Icons.add_task_rounded, 'Contracts', ContractsPage()),
+                      _buildDrawerItem(Icons.settings, 'Settings', Inventory_Grid()),
+                      _buildDrawerItem(Icons.receipt_long, 'Billing', AddinvoicePage()),
+                      _buildDrawerItem(Icons.point_of_sale_sharp, 'Sales', Salespreviewpage()),
                     ],
                   ),
                 ),
@@ -136,11 +135,21 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.white),
-      title: isDrawerOpen ? Text(title, style: TextStyle(color: Colors.white)) : null,
-      onTap: onTap, // Handle tap event
+  Widget _buildDrawerItem(IconData icon, String title, Widget page) {
+    return InkWell(
+      onTap: () {
+        _navigateTo(page); // Handle tap event and navigate
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: selectedPage.runtimeType == page.runtimeType ? Colors.grey.shade700 : Colors.transparent, // Highlight selected item
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: ListTile(
+          leading: Icon(icon, color: Colors.white),
+          title: isDrawerOpen ? Text(title, style: TextStyle(color: Colors.white)) : null, // Conditionally render title
+        ),
+      ),
     );
   }
 }

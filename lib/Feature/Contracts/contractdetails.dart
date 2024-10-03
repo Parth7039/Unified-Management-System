@@ -36,14 +36,12 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
   @override
   void initState() {
     super.initState();
-    // Initialize variables with widget data
     title = widget.title;
     subtitle = widget.subtitle;
     duration = widget.duration;
     additionalTerms = widget.additional_terms;
   }
 
-  // Function to display the edit dialog
   Future<void> _editDetails() async {
     String newTitle = title;
     String newSubtitle = subtitle;
@@ -99,7 +97,6 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  // Update the details with the new values
                   title = newTitle;
                   subtitle = newSubtitle;
                   duration = newDuration;
@@ -119,9 +116,9 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.tealAccent,
         onPressed: _editDetails, // Open the edit dialog when button is pressed
-        child: Icon(Icons.edit, color: Colors.white),
+        child: Icon(Icons.edit, color: Colors.black),
       ),
       appBar: AppBar(
         title: Text(
@@ -130,123 +127,154 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
         ),
         backgroundColor: widget.statusColor,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Contract Details Card
+            Container(
               height: 300,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.grey.shade400,
+                color: Colors.grey.shade800,
                 borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(color: Colors.black54, blurRadius: 10, offset: Offset(0, 5)),
+                ],
               ),
+              padding: EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          title,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
+                      Text(
+                        title,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(width: 1100),
                       Text(
-                          '${DateFormat('dd/MM/yy').format(widget.startdate)} - ${DateFormat('dd/MM/yy').format(widget.enddate)}'),
+                        '${DateFormat('dd/MM/yy').format(widget.startdate)} - ${DateFormat('dd/MM/yy').format(widget.enddate)}',
+                        style: TextStyle(color: Colors.grey.shade400),
+                      ),
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 8.0),
-                    child: Text(
-                      subtitle,
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 18,
-                      ),
-                      textAlign: TextAlign.center,
+                  SizedBox(height: 8),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 18,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 8.0),
-                    child: Text(
-                      additionalTerms,
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 18,
-                      ),
-                      textAlign: TextAlign.center,
+                  SizedBox(height: 8),
+                  Text(
+                    additionalTerms,
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 18,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 8.0),
-                    child: Text(
-                      duration,
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 18,
-                      ),
-                      textAlign: TextAlign.center,
+                  SizedBox(height: 8),
+                  Text(
+                    duration,
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 18,
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              width: 400,
-              height: 600,
+            SizedBox(height: 16),
+            // Status Summary
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey.shade500,
+                color: Colors.grey.shade700,
                 borderRadius: BorderRadius.circular(15),
               ),
-              child: Column(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ListTile(
-                    title: Text(
-                      'Materials',
-                      style:
-                      TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                    ),
-                    trailing: Text(
-                      'Quantity',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.black),
-                    ),
+                  Text(
+                    'Contract Type:',
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
-                  ListTile(
-                    title: Text('10 mm earthing wire'),
-                    trailing: Text('3'),
-                  ),
-                  ListTile(
-                    title: Text('Fan Plugs'),
-                    trailing: Text('15'),
-                  ),
-                  ListTile(
-                    title: Text('Switch board with plates'),
-                    trailing: Text('5'),
+                  Text(
+                    widget.contract_type,
+                    style: TextStyle(color: Colors.white),
                   ),
                 ],
               ),
             ),
-          ),
-        ],
+            SizedBox(height: 16),
+            // Material List
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade500,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Column(
+                  children: [
+                    ListTile(
+                      title: Text(
+                        'Materials',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
+                      trailing: Text(
+                        'Quantity',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          _buildMaterialTile('10 mm earthing wire', '3'),
+                          _buildMaterialTile('Fan Plugs', '15'),
+                          _buildMaterialTile('Switch board with plates', '5'),
+                          // Add more materials here if needed
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 16),
+            // Delete Button
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                ),
+                onPressed: () {
+                  // Implement delete functionality here
+                },
+                child: Text('Delete Contract', style: TextStyle(color: Colors.white)),
+              ),
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  // Helper method to build each material list tile
+  Widget _buildMaterialTile(String materialName, String quantity) {
+    return ListTile(
+      title: Text(materialName, style: TextStyle(color: Colors.white)),
+      trailing: Text(quantity, style: TextStyle(color: Colors.white)),
+      tileColor: Colors.grey.shade600,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     );
   }
 }
