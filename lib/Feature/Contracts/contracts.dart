@@ -64,13 +64,18 @@ class _ContractsPageState extends State<ContractsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey.shade900,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.tealAccent,
         child: Icon(Icons.add, color: Colors.black),
         onPressed: () {
-          showDialog(
+          showModalBottomSheet(
             context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+            ),
             builder: (BuildContext context) {
               return alertDialog();
             },
@@ -78,9 +83,9 @@ class _ContractsPageState extends State<ContractsPage> {
         },
       ),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.grey.shade900,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: Icon(Icons.arrow_back_ios, color: Colors.tealAccent),
           onPressed: () {
             Navigator.pushReplacement(
               context,
@@ -90,9 +95,10 @@ class _ContractsPageState extends State<ContractsPage> {
         ),
         title: Text(
           'Contracts',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.tealAccent, fontSize: 22),
         ),
         centerTitle: true,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -116,9 +122,9 @@ class _ContractsPageState extends State<ContractsPage> {
               padding: const EdgeInsets.all(8.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.black,
+                  color: Colors.grey.shade800,
                   borderRadius: BorderRadius.circular(15),
-                  border: Border.all(color: Colors.black),
+                  border: Border.all(color: Colors.grey.shade800),
                 ),
                 child: Column(
                   children: [
@@ -126,28 +132,29 @@ class _ContractsPageState extends State<ContractsPage> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextField(
-                        cursorColor: Colors.black,
+                        cursorColor: Colors.tealAccent,
                         decoration: InputDecoration(
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: Colors.grey.shade700,
                           hintText: 'Search contracts..',
-                          prefixIcon: Icon(Icons.search, color: Colors.black),
+                          prefixIcon: Icon(Icons.search, color: Colors.tealAccent),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black),
+                            borderSide: BorderSide(color: Colors.tealAccent),
                             borderRadius: BorderRadius.circular(15),
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide(color: Colors.black),
+                            borderSide: BorderSide(color: Colors.grey.shade800),
                           ),
                         ),
+                        style: TextStyle(color: Colors.white),
                         onChanged: (value) {
                           setState(() {
                             if (value.isEmpty) {
                               filteredContracts = List.from(contracts);
                             } else {
                               filteredContracts = contracts.where((contract) =>
-                                  contract.name.toLowerCase().contains(value.toLowerCase()) ||
+                              contract.name.toLowerCase().contains(value.toLowerCase()) ||
                                   contract.details.toLowerCase().contains(value.toLowerCase()) ||
                                   contract.partyName.toLowerCase().contains(value.toLowerCase()))
                                   .toList();
@@ -189,7 +196,11 @@ class _ContractsPageState extends State<ContractsPage> {
         height: 120,
         width: 190,
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.black, width: 1),
+          gradient: LinearGradient(
+            colors: [Colors.teal, Colors.tealAccent],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
           borderRadius: BorderRadius.circular(13),
         ),
         child: Column(
@@ -197,12 +208,12 @@ class _ContractsPageState extends State<ContractsPage> {
           children: [
             Text(
               title,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
             ),
             SizedBox(height: 10),
             Text(
               count,
-              style: TextStyle(fontSize: 35),
+              style: TextStyle(fontSize: 35, color: Colors.white),
             ),
           ],
         ),
@@ -215,13 +226,13 @@ class _ContractsPageState extends State<ContractsPage> {
     Color statusColor;
     switch (contract.contractStatus) {
       case 'Active':
-        statusColor = Colors.green;
+        statusColor = Colors.greenAccent;
         break;
       case 'Inactive':
-        statusColor = Colors.red;
+        statusColor = Colors.redAccent;
         break;
       case 'Completed':
-        statusColor = Colors.blue;
+        statusColor = Colors.blueAccent;
         break;
       default:
         statusColor = Colors.grey;
@@ -229,7 +240,7 @@ class _ContractsPageState extends State<ContractsPage> {
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      color: Colors.grey.shade700,
+      color: Colors.grey.shade800,
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: ListTile(
         contentPadding: EdgeInsets.all(16),
@@ -291,46 +302,47 @@ class _ContractsPageState extends State<ContractsPage> {
 
   // Custom Text Field Widget for reuse
   Widget customTextField(
-    String labelText,
-    String hintText, {
-    required TextEditingController controller,
-    bool isPassword = false,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
+      String labelText,
+      String hintText, {
+        required TextEditingController controller,
+        bool isPassword = false,
+        TextInputType keyboardType = TextInputType.text,
+      }) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.4, // 40% of screen width
       child: TextField(
         controller: controller,
         obscureText: isPassword,
         keyboardType: keyboardType,
-        cursorColor: Colors.black,
+        cursorColor: Colors.tealAccent,
+        style: TextStyle(color: Colors.white),
         decoration: InputDecoration(
           filled: true,
-          fillColor: Colors.white,
+          fillColor: Colors.grey.shade700,
           hintText: hintText,
           labelText: labelText,
-          labelStyle: TextStyle(color: Colors.black),
+          labelStyle: TextStyle(color: Colors.white),
           hintStyle: TextStyle(color: Colors.grey),
-          prefixIcon: isPassword ? Icon(Icons.lock, color: Colors.black) : null,
+          prefixIcon: isPassword ? Icon(Icons.lock, color: Colors.tealAccent) : null,
           suffixIcon: isPassword
               ? IconButton(
-                  icon: Icon(
-                    // Toggle password visibility (if needed)
-                    controller.text.isEmpty ? Icons.visibility_off : Icons.visibility,
-                    color: Colors.black,
-                  ),
-                  onPressed: () {
-                    // Implement visibility toggle if needed
-                  },
-                )
+            icon: Icon(
+              // Toggle password visibility (if needed)
+              controller.text.isEmpty ? Icons.visibility_off : Icons.visibility,
+              color: Colors.tealAccent,
+            ),
+            onPressed: () {
+              // Implement visibility toggle if needed
+            },
+          )
               : null,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(color: Colors.black),
+            borderSide: BorderSide(color: Colors.tealAccent),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(color: Colors.black),
+            borderSide: BorderSide(color: Colors.tealAccent),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
@@ -345,7 +357,7 @@ class _ContractsPageState extends State<ContractsPage> {
     );
   }
 
-  // Add Contract Dialog with Switch for Contract Type
+// Add Contract Dialog with Switch for Contract Type
   // Add Contract Dialog with Switch for Contract Type
   Widget alertDialog() {
     // Controllers for input fields
@@ -651,28 +663,4 @@ class _ContractsPageState extends State<ContractsPage> {
     }
   }
 
-  // Edit Contract Dialog with Switch for Contract Type
-  void _showEditDialog(Contract contract) {
-    // Controllers initialized with existing contract data
-    TextEditingController nameController = TextEditingController(
-        text: contract.name);
-    TextEditingController detailsController = TextEditingController(
-        text: contract.details);
-    TextEditingController durationController = TextEditingController(
-        text: contract.duration);
-    TextEditingController additionalTermsController = TextEditingController(
-        text: contract.additionalTerms);
-    TextEditingController partyNameController = TextEditingController(
-        text: contract.partyName);
-    TextEditingController partyContactController = TextEditingController(
-        text: contract.partyContact);
-    TextEditingController startDateController = TextEditingController(
-        text: _formatDate(contract.startDate));
-    TextEditingController endDateController = TextEditingController(
-        text: _formatDate(contract.endDate));
-
-    String? selectedContractType = contract.contractType;
-    String? selectedContractStatus = contract.contractStatus;
-
-  }
 }

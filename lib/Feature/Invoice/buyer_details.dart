@@ -3,33 +3,45 @@ import 'package:ums/Feature/Invoice/add_invoice.dart';
 import 'package:ums/Feature/Invoice/print_invoice.dart';
 
 class BuyerdetailsPage extends StatefulWidget {
-  const BuyerdetailsPage({super.key});
+  final List<Map<String, String>> addedItems;
+
+  const BuyerdetailsPage({super.key, required this.addedItems});
 
   @override
   State<BuyerdetailsPage> createState() => _BuyerdetailsPageState();
 }
 
 class _BuyerdetailsPageState extends State<BuyerdetailsPage> {
-
   final TextEditingController consigneeController = TextEditingController();
-  final TextEditingController consignee_add_Controller = TextEditingController();
-  final TextEditingController consignee_GST_Controller = TextEditingController();
-  final TextEditingController consignee_state_Controller = TextEditingController();
+  final TextEditingController consigneeAddController = TextEditingController();
+  final TextEditingController consigneeGSTController = TextEditingController();
+  final TextEditingController consigneeStateController = TextEditingController();
 
   final TextEditingController buyerController = TextEditingController();
-  final TextEditingController buyer_add_Controller = TextEditingController();
-  final TextEditingController buyer_GST_Controller = TextEditingController();
-  final TextEditingController buyer_state_Controller = TextEditingController();
+  final TextEditingController buyerAddController = TextEditingController();
+  final TextEditingController buyerGSTController = TextEditingController();
+  final TextEditingController buyerStateController = TextEditingController();
 
-  final TextEditingController invoicecontroller = TextEditingController();
-  final TextEditingController datedcontroller = TextEditingController();
-  final TextEditingController dispatchedcontroller = TextEditingController();
-  final TextEditingController destinationcontroller = TextEditingController();
+  final TextEditingController invoiceController = TextEditingController();
+  final TextEditingController datedController = TextEditingController();
+  final TextEditingController dispatchedController = TextEditingController();
+  final TextEditingController destinationController = TextEditingController();
 
   @override
   void dispose() {
-    // Dispose the controller when the widget is removed from the widget tree
+    // Dispose controllers when the widget is removed from the widget tree
     consigneeController.dispose();
+    consigneeAddController.dispose();
+    consigneeGSTController.dispose();
+    consigneeStateController.dispose();
+    buyerController.dispose();
+    buyerAddController.dispose();
+    buyerGSTController.dispose();
+    buyerStateController.dispose();
+    invoiceController.dispose();
+    datedController.dispose();
+    dispatchedController.dispose();
+    destinationController.dispose();
     super.dispose();
   }
 
@@ -42,20 +54,26 @@ class _BuyerdetailsPageState extends State<BuyerdetailsPage> {
         width: 300,
         child: ElevatedButton(
           onPressed: () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PrintInvoicePage(
-              consigneeName: consigneeController.text,
-              consigneeAddress: consignee_add_Controller.text,
-              consigneeGst: consignee_GST_Controller.text,
-              consigneeState: consignee_state_Controller.text,
-              buyerName: buyerController.text,
-              buyerAddress: buyer_add_Controller.text,
-              buyerGst: buyer_GST_Controller.text,
-              buyerState: buyer_state_Controller.text,
-              invoiceNo: invoicecontroller.text,
-              date: datedcontroller.text,
-              dispatchedThrough: dispatchedcontroller.text,
-              destination: destinationcontroller.text,
-            )));
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PrintInvoicePage(
+                  consigneeName: consigneeController.text,
+                  consigneeAddress: consigneeAddController.text,
+                  consigneeGst: consigneeGSTController.text,
+                  consigneeState: consigneeStateController.text,
+                  buyerName: buyerController.text,
+                  buyerAddress: buyerAddController.text,
+                  buyerGst: buyerGSTController.text,
+                  buyerState: buyerStateController.text,
+                  invoiceNo: invoiceController.text,
+                  date: datedController.text,
+                  dispatchedThrough: dispatchedController.text,
+                  destination: destinationController.text,
+                  addedItems: widget.addedItems,
+                ),
+              ),
+            );
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.black,
@@ -63,7 +81,7 @@ class _BuyerdetailsPageState extends State<BuyerdetailsPage> {
               borderRadius: BorderRadius.circular(15),
             ),
           ),
-          child: Text(
+          child: const Text(
             'Generate Invoice',
             style: TextStyle(color: Colors.white),
           ),
@@ -78,9 +96,9 @@ class _BuyerdetailsPageState extends State<BuyerdetailsPage> {
               MaterialPageRoute(builder: (context) => AddinvoicePage()),
             );
           },
-          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
         ),
-        title: Text(
+        title: const Text(
           'Buyer Details',
           style: TextStyle(color: Colors.black),
         ),
@@ -94,35 +112,82 @@ class _BuyerdetailsPageState extends State<BuyerdetailsPage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 20),
-                  customTextField(label: 'Consignee (Ship to)', hintText: 'Enter consignee Name', controller: consigneeController),
-                  customTextField(label: "", hintText: 'Enter Consignee address', controller: consignee_add_Controller),
-                  customTextField(label: "", hintText: 'GSTIN/UIN', controller: consignee_GST_Controller),
-                  customTextField(label: "", hintText: 'State of supply', controller: consignee_state_Controller),
-
-                  SizedBox(height: 30,),
-                  customTextField(label: 'Buyer (Bill to)', hintText: 'Buyer name', controller: buyerController),
-                  customTextField(label: "", hintText: 'Enter Buyer address', controller: buyer_add_Controller),
-                  customTextField(label: "", hintText: 'GSTIN/UIN', controller: buyer_GST_Controller),
-                  customTextField(label: "", hintText: 'Enter Buyer state', controller: buyer_state_Controller),
-
+                  const SizedBox(height: 20),
+                  customTextField(
+                    label: 'Consignee (Ship to)',
+                    hintText: 'Enter consignee Name',
+                    controller: consigneeController,
+                  ),
+                  customTextField(
+                    label: "",
+                    hintText: 'Enter Consignee address',
+                    controller: consigneeAddController,
+                  ),
+                  customTextField(
+                    label: "",
+                    hintText: 'GSTIN/UIN',
+                    controller: consigneeGSTController,
+                  ),
+                  customTextField(
+                    label: "",
+                    hintText: 'State of supply',
+                    controller: consigneeStateController,
+                  ),
+                  const SizedBox(height: 30),
+                  customTextField(
+                    label: 'Buyer (Bill to)',
+                    hintText: 'Buyer name',
+                    controller: buyerController,
+                  ),
+                  customTextField(
+                    label: "",
+                    hintText: 'Enter Buyer address',
+                    controller: buyerAddController,
+                  ),
+                  customTextField(
+                    label: "",
+                    hintText: 'GSTIN/UIN',
+                    controller: buyerGSTController,
+                  ),
+                  customTextField(
+                    label: "",
+                    hintText: 'Enter Buyer state',
+                    controller: buyerStateController,
+                  ),
                 ],
               ),
             ),
           ),
-          SizedBox(width: 5,),
+          const SizedBox(width: 5),
           Expanded(
-              child: customContainer(
-                  Column(
-                    children: [
-                      SizedBox(height: 20,),
-                      customTextField(label: 'Invoice No.', hintText: '', controller: invoicecontroller),
-                      customTextField(label: 'Dated', hintText: '', controller: datedcontroller),
-                      customTextField(label: 'Dispatched through.', hintText: '', controller: dispatchedcontroller),
-                      customTextField(label: 'Destination', hintText: '', controller: destinationcontroller),
-                    ],
-                  ))
-          )
+            child: customContainer(
+              Column(
+                children: [
+                  const SizedBox(height: 20),
+                  customTextField(
+                    label: 'Invoice No.',
+                    hintText: '',
+                    controller: invoiceController,
+                  ),
+                  customTextField(
+                    label: 'Dated',
+                    hintText: '',
+                    controller: datedController,
+                  ),
+                  customTextField(
+                    label: 'Dispatched through.',
+                    hintText: '',
+                    controller: dispatchedController,
+                  ),
+                  customTextField(
+                    label: 'Destination',
+                    hintText: '',
+                    controller: destinationController,
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -132,7 +197,7 @@ class _BuyerdetailsPageState extends State<BuyerdetailsPage> {
   Widget customContainer(Widget child) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.purple.shade50,
         borderRadius: BorderRadius.circular(15),
@@ -154,9 +219,9 @@ class _BuyerdetailsPageState extends State<BuyerdetailsPage> {
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 5),
+        const SizedBox(height: 5),
         TextField(
           controller: controller,
           obscureText: isPassword,
@@ -166,20 +231,19 @@ class _BuyerdetailsPageState extends State<BuyerdetailsPage> {
             filled: true,
             fillColor: Colors.white,
             hintText: hintText,
-            hintStyle: TextStyle(color: Colors.grey),
-            contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
+            hintStyle: const TextStyle(color: Colors.grey),
+            contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
               borderSide: BorderSide(color: Colors.grey.shade400),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(color: Colors.black),
+              borderSide: const BorderSide(color: Colors.black),
             ),
           ),
         ),
       ],
     );
   }
-
 }
