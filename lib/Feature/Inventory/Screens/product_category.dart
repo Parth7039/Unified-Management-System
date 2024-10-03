@@ -27,7 +27,7 @@ class _Inventory_GridState extends State<Inventory_Grid> {
     inventory = await productService.getCategories();
     setState(() {
     });
-    print(inventory.toString());
+  
   }
 
   createCategory(String catName,String catDesc,String imageUrl)async{

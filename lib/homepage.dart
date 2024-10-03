@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:ums/Feature/Contracts/contracts.dart';
 import 'package:ums/Feature/Invoice/add_invoice.dart';
 import 'package:ums/Feature/Inventory/Screens/product_category.dart';
+import 'package:ums/Feature/Inventory/Screens/inventory_analysis.dart';
+import 'package:ums/Feature/Sales/sales.graph.dart';
+
 
 import 'Feature/Dashboard/dashboard.dart';
 import 'Feature/Sales/sales.dart';

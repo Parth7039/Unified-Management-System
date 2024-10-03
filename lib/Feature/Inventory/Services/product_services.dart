@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../Models/product_category_model.dart';
 
 class ProductService {
-  final String baseUrl = 'http://192.168.0.106:3000/categories'; // Your API URL
+  final String baseUrl = 'http://192.168.0.105:3000/categories'; // Your API URL
 
   // Fetch all categories
   Future<List<ProductCategory>> getCategories() async {
