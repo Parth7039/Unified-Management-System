@@ -4,8 +4,9 @@ import 'package:ums/Feature/Invoice/print_invoice.dart';
 
 class BuyerdetailsPage extends StatefulWidget {
   final List<Map<String, String>> addedItems;
+  final double totalAmount;
 
-  const BuyerdetailsPage({super.key, required this.addedItems});
+  const BuyerdetailsPage({super.key, required this.addedItems, required this.totalAmount});
 
   @override
   State<BuyerdetailsPage> createState() => _BuyerdetailsPageState();
@@ -71,6 +72,7 @@ class _BuyerdetailsPageState extends State<BuyerdetailsPage> {
                   dispatchedThrough: dispatchedController.text,
                   destination: destinationController.text,
                   addedItems: widget.addedItems,
+                  totalAmount: widget.totalAmount,
                 ),
               ),
             );
@@ -93,7 +95,7 @@ class _BuyerdetailsPageState extends State<BuyerdetailsPage> {
           onPressed: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => AddinvoicePage()),
+              MaterialPageRoute(builder: (context) => const AddinvoicePage()),
             );
           },
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),

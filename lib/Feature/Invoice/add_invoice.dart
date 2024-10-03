@@ -44,6 +44,16 @@ class _AddinvoicePageState extends State<AddinvoicePage> {
     });
   }
 
+  double calculateTotalAmount() {
+    double total = 0;
+    for (var item in addedItems) {
+      double quantity = double.tryParse(item['quantity'] ?? '0') ?? 0;
+      double rate = double.tryParse(item['rate'] ?? '0') ?? 0;
+      total += quantity * rate;
+    }
+    return total;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +63,7 @@ class _AddinvoicePageState extends State<AddinvoicePage> {
         leading: IconButton(
           onPressed: () {
             Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => HomePage()));
+                context, MaterialPageRoute(builder: (context) => const HomePage()));
           },
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
         ),
@@ -70,7 +80,7 @@ class _AddinvoicePageState extends State<AddinvoicePage> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => BuyerdetailsPage(addedItems: addedItems), // Pass addedItems
+              builder: (context) => BuyerdetailsPage(addedItems: addedItems,totalAmount: calculateTotalAmount(),), // Pass addedItems
             ),
           );
         },
@@ -79,7 +89,6 @@ class _AddinvoicePageState extends State<AddinvoicePage> {
           style: TextStyle(color: Colors.white),
         ),
       ),
-
       body: Row(
         children: [
           // Left column: Add Item form
@@ -198,6 +207,18 @@ class _AddinvoicePageState extends State<AddinvoicePage> {
                         },
                       ),
                     ),
+                    // Display total amount
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Total Amount: ₹${calculateTotalAmount().toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -289,8 +310,8 @@ class _AddinvoicePageState extends State<AddinvoicePage> {
         color: Colors.purple.shade50,
         borderRadius: BorderRadius.circular(15),
       ),
-      child: Column(
-        children: const [
+      child: const Column(
+        children: [
           Text(
             'Saved Data',
             style: TextStyle(

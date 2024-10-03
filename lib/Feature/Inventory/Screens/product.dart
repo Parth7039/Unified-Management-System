@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class NewInventory extends StatefulWidget {
+  const NewInventory({super.key});
+
   @override
   _NewInventoryState createState() => _NewInventoryState();
 }
@@ -44,7 +46,7 @@ class _NewInventoryState extends State<NewInventory> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15.0),
           ),
-          title: Text(
+          title: const Text(
             'Edit Item',
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -68,7 +70,7 @@ class _NewInventoryState extends State<NewInventory> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -82,7 +84,6 @@ class _NewInventoryState extends State<NewInventory> {
                 });
                 Navigator.of(context).pop();
               },
-              child: Text('Save'),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.blueAccent,
@@ -90,6 +91,7 @@ class _NewInventoryState extends State<NewInventory> {
                   borderRadius: BorderRadius.circular(15.0),
                 ),
               ),
+              child: const Text('Save'),
             ),
           ],
         );
@@ -111,7 +113,7 @@ class _NewInventoryState extends State<NewInventory> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15.0),
           ),
-          title: Text(
+          title: const Text(
             'Add Item',
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -135,7 +137,7 @@ class _NewInventoryState extends State<NewInventory> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -149,7 +151,6 @@ class _NewInventoryState extends State<NewInventory> {
                 });
                 Navigator.of(context).pop();
               },
-              child: Text('Add'),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.blueAccent,
@@ -157,6 +158,7 @@ class _NewInventoryState extends State<NewInventory> {
                   borderRadius: BorderRadius.circular(15.0),
                 ),
               ),
+              child: const Text('Add'),
             ),
           ],
         );
@@ -188,13 +190,13 @@ class _NewInventoryState extends State<NewInventory> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Inventory Grid'),
+        title: const Text('Inventory Grid'),
         backgroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 4, // Number of columns in the grid
             crossAxisSpacing: 8.0,
             mainAxisSpacing: 8.0,
@@ -218,12 +220,12 @@ class _NewInventoryState extends State<NewInventory> {
                       children: [
                         Text(
                           item['name'],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18.0,
                           ),
                         ),
-                        SizedBox(height: 8.0),
+                        const SizedBox(height: 8.0),
                         Text(
                           'Description: ${item['description']}',
                           style: TextStyle(color: Colors.grey[700]),
@@ -243,7 +245,7 @@ class _NewInventoryState extends State<NewInventory> {
                     right: 8.0,
                     top: 8.0,
                     child: IconButton(
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.edit,
                         color: Colors.blueAccent,
                       ),
@@ -258,8 +260,8 @@ class _NewInventoryState extends State<NewInventory> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addItem,
-        child: Icon(Icons.add),
         backgroundColor: Colors.blueAccent,
+        child: const Icon(Icons.add),
       ),
     );
   }

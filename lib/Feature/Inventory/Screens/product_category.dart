@@ -86,7 +86,6 @@ class _Inventory_GridState extends State<Inventory_Grid> {
                   );
                 }
               },
-              child: Text('Add'),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.blueAccent,
@@ -94,6 +93,7 @@ class _Inventory_GridState extends State<Inventory_Grid> {
                   borderRadius: BorderRadius.circular(15.0),
                 ),
               ),
+              child: const Text('Add'),
             ),
           ],
         );
@@ -146,7 +146,7 @@ class _Inventory_GridState extends State<Inventory_Grid> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => NewInventory(),
+                    builder: (context) => const NewInventory(),
                   ),
                 );
               },
@@ -201,8 +201,8 @@ class _Inventory_GridState extends State<Inventory_Grid> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddItemDialog,
-        child: const Icon(Icons.add),
         backgroundColor: Colors.blueAccent,
+        child: const Icon(Icons.add),
       ),
     );
   }
