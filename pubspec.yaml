@@ -16,6 +16,8 @@ dependencies:
   printing: ^5.13.2
   pdf: ^3.11.1
   path_provider: ^2.1.4
+  syncfusion_flutter_charts: ^27.1.51
+  shared_preferences: ^2.3.2
 
 dev_dependencies:
   flutter_test:
