@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
-import '../Inventory/Models/product_category_model.dart';
+import 'package:intl/intl.dart';
+import 'package:ums/Feature/Sales/sales_services.dart';
 import '../Inventory/Models/product_model.dart';
 import '../Inventory/Services/product_services.dart';
 
@@ -15,20 +15,16 @@ class _SalespreviewpageState extends State<Salespreviewpage> {
   final TextEditingController buyerController = TextEditingController();
   final TextEditingController itemQuantityController = TextEditingController();
 
-  List<ProductCategory> categories = [];
   List<Product> inventory = [];
   ProductService productService = ProductService();
-  ProductCategory? selectedCategory;
+  SaleService saleService = SaleService();
   Product? selectedItem;
-
-  List<int> soldItems = List.generate(7, (_) => 0); // Stores sold items for each day of the week
-  List<int> revenueData = List.generate(12, (_) => 0); // Monthly revenue data
-  int selectedMonth = 0; // For the month filter (0 = Current Month)
 
   @override
   void initState() {
     super.initState();
-    fetchCategories();
+    // Fetch all products when the page initializes
+    fetchProducts();
   }
 
   @override
@@ -38,49 +34,33 @@ class _SalespreviewpageState extends State<Salespreviewpage> {
     super.dispose();
   }
 
-  // Fetch categories and products based on category selection
-  Future<void> fetchCategories() async {
+  // Fetch all products from the API
+  Future<void> fetchProducts() async {
     try {
-      List<ProductCategory> fetchedCategories = await productService.getCategories();
-      setState(() {
-        categories = fetchedCategories;
-        if (categories.isNotEmpty) {
-          selectedCategory = categories.first;
-          fetchProductsByCategory(selectedCategory!.id!);
-        }
-      });
-    } catch (error) {
-      print('Error fetching categories: $error');
+      inventory = await productService.getAllProducts(); // Assuming you have a method to get all products
+      setState(() {});
+    } catch (e) {
+      // Handle any exceptions here
+      print('Error fetching products: $e');
     }
   }
 
-  // Fetch products for the selected category
-  Future<void> fetchProductsByCategory(String categoryId) async {
+Future<void> handleSale() async {
+    final String buyerName = buyerController.text;
+    final String productId = selectedItem?.id ?? '';
+    final int quantitySold = int.tryParse(itemQuantityController.text) ?? 0;
+
     try {
-      // Call the correct method to fetch products by category
-      List<Product> fetchedProducts = (await productService.getCategories()).cast<Product>();
-      setState(() {
-        inventory = fetchedProducts;
-        if (inventory.isNotEmpty) {
-          selectedItem = inventory.first;
-        }
-      });
+      await saleService.createSale(buyerName, productId, quantitySold, null); // No date provided
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Sale recorded successfully!')),
+      );
     } catch (error) {
-      print('Error fetching products: $error');
-    }
-  }
-
-  void sellItem() {
-    final quantity = int.tryParse(itemQuantityController.text) ?? 0;
-
-    if (selectedItem != null && selectedItem!.quantity >= quantity) {
-      setState(() {
-        selectedItem!.quantity -= quantity;
-        final revenue = (quantity * selectedItem!.price).toInt();
-        revenueData[selectedMonth] = (revenueData[selectedMonth] ?? 0) + revenue;
-        int dayIndex = (DateTime.now().weekday % 7); // Ensure dayIndex stays between 0 and 6
-        soldItems[dayIndex] += quantity;
-      });
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $error')),
+      );
     }
   }
 
@@ -106,28 +86,11 @@ class _SalespreviewpageState extends State<Salespreviewpage> {
               ),
             ),
             const SizedBox(height: 16),
-            // Category Dropdown
-            if (categories.isNotEmpty)
-              DropdownButton<ProductCategory>(
-                value: selectedCategory,
-                items: categories.map((ProductCategory category) {
-                  return DropdownMenuItem<ProductCategory>(
-                    value: category,
-                    child: Text(category.categoryName),
-                  );
-                }).toList(),
-                onChanged: (ProductCategory? newCategory) {
-                  setState(() {
-                    selectedCategory = newCategory!;
-                    fetchProductsByCategory(newCategory.id!);
-                  });
-                },
-              ),
-            const SizedBox(height: 16),
             // Item Dropdown
             if (inventory.isNotEmpty)
               DropdownButton<Product>(
                 value: selectedItem,
+                hint: const Text('Select an item'),
                 items: inventory.map((Product item) {
                   return DropdownMenuItem<Product>(
                     value: item,
@@ -152,7 +115,12 @@ class _SalespreviewpageState extends State<Salespreviewpage> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: sellItem,
+              onPressed: () {
+
+                handleSale();
+                buyerController.clear();
+                itemQuantityController.clear();                
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
               ),
@@ -161,96 +129,8 @@ class _SalespreviewpageState extends State<Salespreviewpage> {
             const SizedBox(height: 32),
 
             // Graph Section
-            const Text('Sold Items (Week)', style: TextStyle(fontSize: 24)),
-            SizedBox(
-              height: 200,
-              child: buildBarChart(),
-            ),
-            const SizedBox(height: 16),
-
-            // Month Filter
-            DropdownButton<int>(
-              value: selectedMonth,
-              items: List.generate(12, (index) => index).map((int month) {
-                return DropdownMenuItem<int>(
-                  value: month,
-                  child: Text('Month ${month + 1}'),
-                );
-              }).toList(),
-              onChanged: (int? newValue) {
-                setState(() {
-                  selectedMonth = newValue!;
-                });
-              },
-            ),
-
-            // Revenue Pie Chart
-            const Text('Total Revenue (Monthly)', style: TextStyle(fontSize: 24)),
-            SizedBox(
-              height: 200,
-              child: buildPieChart(),
-            ),
-            const SizedBox(height: 32),
           ],
         ),
-      ),
-    );
-  }
-
-  // Bar chart for sold items
-  Widget buildBarChart() {
-    return BarChart(
-      BarChartData(
-        titlesData: FlTitlesData(
-          leftTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: true),
-          ),
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 38,
-              getTitlesWidget: (double value, TitleMeta meta) {
-                const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-                return SideTitleWidget(
-                  axisSide: meta.axisSide,
-                  space: 4,
-                  child: Text(
-                    daysOfWeek[value.toInt()],
-                    style: const TextStyle(color: Colors.black, fontSize: 12),
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-        borderData: FlBorderData(show: false),
-        barGroups: List.generate(7, (index) {
-          return BarChartGroupData(
-            x: index,
-            barRods: [
-              BarChartRodData(
-                toY: soldItems[index].toDouble(),
-                color: Colors.blue,
-              ),
-            ],
-          );
-        }),
-      ),
-    );
-  }
-
-  // Pie chart for revenue
-  Widget buildPieChart() {
-    return PieChart(
-      PieChartData(
-        sections: List.generate(12, (index) {
-          return PieChartSectionData(
-            value: revenueData[index].toDouble(),
-            title: 'M${index + 1}: \$${revenueData[index]}',
-            color: Colors.primaries[index % Colors.primaries.length],
-          );
-        }),
-        borderData: FlBorderData(show: false),
       ),
     );
   }
