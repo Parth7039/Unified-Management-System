@@ -302,13 +302,14 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
       double sgstAmount = totalAmount * 0.09;
       double totalWithTax = totalAmount + cgstAmount + sgstAmount;
 
-      // Add the header
+      // Add the content and footer
       pdf.addPage(
         pw.Page(
           build: (pw.Context context) {
             return pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
+                // Header section
                 pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   children: [
@@ -316,9 +317,12 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
                         pw.Text('K B ELECTRIC COMPANY', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 18)),
-                        pw.Text('11 DEEPLAXMI CHS, MOHINDAR HIGHSCHOOL ROAD,\nAGRA ROAD KALYAN WEST, DIST: THANE', style: const pw.TextStyle(fontSize: 12)),
-                        pw.Text('State: Maharashtra, Code: 27', style: const pw.TextStyle(fontSize: 12)),
-                        pw.Text('E-mail: kbeco.2001@gmail.com', style: const pw.TextStyle(fontSize: 12)),
+                        pw.Text(
+                          '11 DEEPLAXMI CHS, MOHINDAR HIGHSCHOOL ROAD,\nAGRA ROAD KALYAN WEST, DIST: THANE',
+                          style: pw.TextStyle(fontSize: 12),
+                        ),
+                        pw.Text('State: Maharashtra, Code: 27', style: pw.TextStyle(fontSize: 12)),
+                        pw.Text('E-mail: kbeco.2001@gmail.com', style: pw.TextStyle(fontSize: 12)),
                       ],
                     ),
                     pw.Column(
@@ -326,12 +330,13 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
                       children: [
                         pw.Text('Invoice No: ${widget.invoiceNo}', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                         pw.Text('Date: ${widget.date}', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                        pw.Text('Dispatched Through: ${widget.dispatchedThrough}', style: const pw.TextStyle(fontSize: 12)),
-                        pw.Text('Destination: ${widget.destination}', style: const pw.TextStyle(fontSize: 12)),
+                        pw.Text('Dispatched Through: ${widget.dispatchedThrough}', style: pw.TextStyle(fontSize: 12)),
+                        pw.Text('Destination: ${widget.destination}', style: pw.TextStyle(fontSize: 12)),
                       ],
                     ),
                   ],
                 ),
+
                 pw.SizedBox(height: 20),
 
                 // Consignee Details
@@ -358,23 +363,23 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
                     pw.TableRow(
                       children: [
                         pw.Padding(
-                          padding: const pw.EdgeInsets.all(8.0),
+                          padding: pw.EdgeInsets.all(8.0),
                           child: pw.Text('Description', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                         ),
                         pw.Padding(
-                          padding: const pw.EdgeInsets.all(8.0),
+                          padding: pw.EdgeInsets.all(8.0),
                           child: pw.Text('HSN', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                         ),
                         pw.Padding(
-                          padding: const pw.EdgeInsets.all(8.0),
+                          padding: pw.EdgeInsets.all(8.0),
                           child: pw.Text('Quantity', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                         ),
                         pw.Padding(
-                          padding: const pw.EdgeInsets.all(8.0),
+                          padding: pw.EdgeInsets.all(8.0),
                           child: pw.Text('Rate', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                         ),
                         pw.Padding(
-                          padding: const pw.EdgeInsets.all(8.0),
+                          padding: pw.EdgeInsets.all(8.0),
                           child: pw.Text('Amount', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                         ),
                       ],
@@ -414,7 +419,7 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
                   mainAxisAlignment: pw.MainAxisAlignment.end,
                   children: [
                     pw.Text('Total Amount: ', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14)),
-                    pw.Text('Rs ${totalAmount.toStringAsFixed(2)}', style: const pw.TextStyle(fontSize: 14)),
+                    pw.Text('Rs ${totalAmount.toStringAsFixed(2)}', style: pw.TextStyle(fontSize: 14)),
                   ],
                 ),
 
@@ -479,6 +484,24 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
 
                 // Total Amount with taxes
                 pw.Text('Total Amount: Rs ${totalWithTax.toStringAsFixed(2)} (Including Taxes)', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14)),
+
+                pw.SizedBox(height: 20), // Space before footer
+
+                // Add the footer with company name and signature
+                pw.Spacer(), // Pushes the footer to the bottom
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.start,
+                  children: [
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text('K B Electric Company', style: pw.TextStyle(fontSize: 12)),
+                        pw.SizedBox(height: 30),
+                        pw.Text('Signature', style: pw.TextStyle(fontSize: 12)),
+                      ],
+                    ),
+                  ],
+                ),
               ],
             );
           },
@@ -490,7 +513,7 @@ class _PrintInvoicePageState extends State<PrintInvoicePage> {
       final file = File("${tempDir.path}/invoice.pdf");
       await file.writeAsBytes(await pdf.save());
 
-      // Open the PDF
+      // Open the PDF based on platform
       if (Platform.isWindows) {
         Process.run('start', [file.path], runInShell: true);
       } else if (Platform.isLinux) {
