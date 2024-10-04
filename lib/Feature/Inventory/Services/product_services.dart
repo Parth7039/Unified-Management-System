@@ -6,89 +6,91 @@ import '../Models/product_model.dart';
 class ProductService {
   final String baseUrl = 'http://localhost:3000/categories'; // Your API URL
 
-  // Fetch all categories
-  Future<List<ProductCategory>> getCategories() async {
-    List<ProductCategory> allCategories = [];
-    final response = await http.get(
-      Uri.parse(baseUrl),
-      headers: {
-        "Accept": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-    );
+  // Fetch all products by category ID
+  // Future<List<Product>> getProductsByCategory(String categoryId) async {
+  //   final response = await http.get(Uri.parse('$baseUrl/$categoryId/products'));
+
+  //   if (response.statusCode == 200) {
+  //     print(response.body);
+
+  //     List<dynamic> data = json.decode(response.body);
+  //     return data.map((json) => Product.fromJson(json)).toList();
+  //   } else {
+  //     throw Exception('Failed to load products');
+  //   }
+  // }
+  Future<List<Product>> getProductsByCategory(String categoryId) async {
+    final response = await http.get(Uri.parse('$baseUrl/$categoryId/products'));
 
     if (response.statusCode == 200) {
-      // Parse the response as a Map
-      Map<String, dynamic> responseBody = jsonDecode(response.body);
+      // Decode the response body as a map (object)
+      // print(response.request);
+      Map<String, dynamic> jsonResponse = json.decode(response.body);
+      // print(jsonResponse);
+      // Check if the response was successful and contains products
+      if (jsonResponse['success'] == true &&
+          jsonResponse.containsKey('products')) {
+        // Get the products list
+        List<dynamic> productList = jsonResponse['products'];
 
-      // Assuming the list of categories is under the 'data' key or another key
-      if (responseBody.containsKey('categories')) {
-        List<dynamic> categoryList = responseBody['categories'];
-        print(categoryList.toString());
-        allCategories = categoryList
-            .map((dynamic item) => ProductCategory.fromJson(item))
-            .toList();
+        // Convert each product from JSON to Product object and return the list
+        return productList.map((json) => Product.fromJson(json)).toList();
       } else {
-        throw Exception('Data key not found in the response');
+        return []; // Return an empty list if no products are found
       }
     } else {
-      throw Exception('Failed to load categories');
+      throw Exception('Failed to load products');
     }
-
-    return allCategories;
   }
 
-  // Fetch a category by ID
-  // Future<ProductCategory> getCategoryById(String id) async {
-  //   final response = await http.get(Uri.parse('$baseUrl/$id'));
+  // Fetch a single product by ID
+  Future<Product> getProductById(String productId) async {
+    final response = await http.get(Uri.parse('$baseUrl/products/$productId'));
 
-  //   if (response.statusCode == 200) {
-  //     return ProductCategory.fromJson(jsonDecode(response.body));
-  //   } else {
-  //     throw Exception('Failed to load category');
-  //   }
-  // }
+    if (response.statusCode == 200) {
+      return Product.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load product');
+    }
+  }
 
-  // Create a new category
-  Future<ProductCategory> createCategory(ProductCategory category) async {
+  // Create a new product
+  Future<void> createProduct(Product product, String categoryId) async {
     final response = await http.post(
-      Uri.parse(baseUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
+      Uri.parse('$baseUrl/$categoryId/products'),
+      headers: {
+        'Content-Type': 'application/json',
       },
-      body: jsonEncode(category.toJson()),
+      body: jsonEncode(product.toJson()),
     );
 
-    if (response.statusCode == 201) {
-      return ProductCategory.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to create category');
+    if (response.statusCode != 201) {
+      throw Exception('Failed to create product');
     }
   }
 
-  // // Update a category by ID
-  // Future<ProductCategory> updateCategory(String id, ProductCategory category) async {
-  //   final response = await http.put(
-  //     Uri.parse('$baseUrl/$id'),
-  //     headers: <String, String>{
-  //       'Content-Type': 'application/json; charset=UTF-8',
-  //     },
-  //     body: jsonEncode(category.toJson()),
-  //   );
+  // Update an existing product
+  Future<void> updateProduct(String productId, Product product) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/products/$productId'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(product.toJson()),
+    );
 
-  //   if (response.statusCode == 200) {
-  //     return ProductCategory.fromJson(jsonDecode(response.body));
-  //   } else {
-  //     throw Exception('Failed to update category');
-  //   }
-  // }
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update product');
+    }
+  }
 
-  // Delete a category by ID
-  Future<void> deleteCategory(String id) async {
-    final response = await http.delete(Uri.parse('$baseUrl/$id'));
+  // Delete a product by ID
+  Future<void> deleteProduct(String productId) async {
+    final response =
+        await http.delete(Uri.parse('$baseUrl/products/$productId'));
 
-    if (response.statusCode != 204) {
-      throw Exception('Failed to delete category');
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete product');
     }
   }
 

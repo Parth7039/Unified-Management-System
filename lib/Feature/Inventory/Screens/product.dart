@@ -1,52 +1,65 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../Models/product_model.dart';
+import '../Services/product_services.dart'; // Assuming the Product model is in this file
 
-class NewInventory extends StatefulWidget {
-  const NewInventory({super.key});
+class ProductScreen extends StatefulWidget {
+  final String categoryId; // Category ID passed from the previous screen
+
+  const ProductScreen({Key? key, required this.categoryId}) : super(key: key);
 
   @override
-  _NewInventoryState createState() => _NewInventoryState();
+  _ProductScreenState createState() => _ProductScreenState();
 }
 
-class _NewInventoryState extends State<NewInventory> {
-  List<Map<String, dynamic>> inventory = [
-    {
-      'name': 'Item 1',
-      'description': 'High-quality product',
-      'model': 'Model A',
-      'quantity': 10,
-    },
-    {
-      'name': 'Item 2',
-      'description': 'Durable and reliable',
-      'model': 'Model B',
-      'quantity': 5,
-    },
-    {
-      'name': 'Item 3',
-      'description': 'Top seller',
-      'model': 'Model C',
-      'quantity': 15,
-    },
-  ];
+class _ProductScreenState extends State<ProductScreen> {
+  final ProductService _productService =
+      ProductService(); // Initialize ProductService
+  List<Product> _products = []; // List to hold products
+  bool _loading = true; // Loading state
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProducts(); // Fetch products when the screen is initialized
+  }
+
+  // Method to fetch products by category ID
+  Future<void> _fetchProducts() async {
+    try {
+      List<Product> products =
+          await _productService.getProductsByCategory(widget.categoryId);
+      setState(() {
+        _products = products;
+        _loading = false;
+      });
+    } catch (error) {
+      setState(() {
+        _loading = false;
+      });
+      print('Error fetching products: $error');
+    }
+  }
 
   void _editItem(int index) {
     showDialog(
       context: context,
       builder: (context) {
         TextEditingController nameController =
-        TextEditingController(text: inventory[index]['name']);
+            TextEditingController(text: _products[index].name);
         TextEditingController descriptionController =
-        TextEditingController(text: inventory[index]['description']);
-        TextEditingController modelController =
-        TextEditingController(text: inventory[index]['model']);
-        TextEditingController quantityController = TextEditingController(
-            text: inventory[index]['quantity'].toString());
+            TextEditingController(text: _products[index].description);
+        TextEditingController priceController =
+            TextEditingController(text: _products[index].price.toString());
+        TextEditingController quantityController =
+            TextEditingController(text: _products[index].quantity.toString());
 
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15.0),
           ),
-          title: const Text(
+          title: Text(
             'Edit Item',
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -59,7 +72,8 @@ class _NewInventoryState extends State<NewInventory> {
               children: [
                 _buildTextField(nameController, 'Name'),
                 _buildTextField(descriptionController, 'Description'),
-                _buildTextField(modelController, 'Model'),
+                _buildTextField(priceController, 'Price',
+                    inputType: TextInputType.number),
                 _buildTextField(quantityController, 'Quantity',
                     inputType: TextInputType.number),
               ],
@@ -70,20 +84,27 @@ class _NewInventoryState extends State<NewInventory> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancel'),
+              child: Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                final updatedProduct = Product(
+                  id: _products[index].id,
+                  name: nameController.text,
+                  description: descriptionController.text,
+                  price: double.tryParse(priceController.text) ?? 0,
+                  quantity: int.tryParse(quantityController.text) ?? 0,
+                  categoryId: _products[index].categoryId,
+                );
+
+                await _updateProduct(
+                    updatedProduct); // Update product on the server
                 setState(() {
-                  inventory[index] = {
-                    'name': nameController.text,
-                    'description': descriptionController.text,
-                    'model': modelController.text,
-                    'quantity': int.tryParse(quantityController.text) ?? 0,
-                  };
+                  _products[index] = updatedProduct;
                 });
                 Navigator.of(context).pop();
               },
+              child: Text('Save'),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.blueAccent,
@@ -91,7 +112,6 @@ class _NewInventoryState extends State<NewInventory> {
                   borderRadius: BorderRadius.circular(15.0),
                 ),
               ),
-              child: const Text('Save'),
             ),
           ],
         );
@@ -99,21 +119,34 @@ class _NewInventoryState extends State<NewInventory> {
     );
   }
 
+  Future<void> _updateProduct(Product product) async {
+    final response = await http.put(
+      Uri.parse('http://localhost:3000/products/${product.id}'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(product.toJson()),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update product');
+    }
+  }
+
   void _addItem() {
-    // This function can be implemented to add a new item to the inventory.
     showDialog(
       context: context,
       builder: (context) {
         TextEditingController nameController = TextEditingController();
         TextEditingController descriptionController = TextEditingController();
-        TextEditingController modelController = TextEditingController();
+        TextEditingController priceController = TextEditingController();
         TextEditingController quantityController = TextEditingController();
 
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15.0),
           ),
-          title: const Text(
+          title: Text(
             'Add Item',
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -126,7 +159,8 @@ class _NewInventoryState extends State<NewInventory> {
               children: [
                 _buildTextField(nameController, 'Name'),
                 _buildTextField(descriptionController, 'Description'),
-                _buildTextField(modelController, 'Model'),
+                _buildTextField(priceController, 'Price',
+                    inputType: TextInputType.number),
                 _buildTextField(quantityController, 'Quantity',
                     inputType: TextInputType.number),
               ],
@@ -137,20 +171,26 @@ class _NewInventoryState extends State<NewInventory> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancel'),
+              child: Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                final newProduct = Product(
+                  name: nameController.text,
+                  description: descriptionController.text,
+                  price: double.tryParse(priceController.text) ?? 0,
+                  quantity: int.tryParse(quantityController.text) ?? 0,
+                  categoryId: widget.categoryId, // Use the passed category ID
+                );
+
+                await _productService.createProduct(newProduct,
+                    widget.categoryId); // Create product on the server
                 setState(() {
-                  inventory.add({
-                    'name': nameController.text,
-                    'description': descriptionController.text,
-                    'model': modelController.text,
-                    'quantity': int.tryParse(quantityController.text) ?? 0,
-                  });
+                  _products.add(newProduct);
                 });
                 Navigator.of(context).pop();
               },
+              child: Text('Add'),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.blueAccent,
@@ -158,7 +198,6 @@ class _NewInventoryState extends State<NewInventory> {
                   borderRadius: BorderRadius.circular(15.0),
                 ),
               ),
-              child: const Text('Add'),
             ),
           ],
         );
@@ -166,8 +205,21 @@ class _NewInventoryState extends State<NewInventory> {
     );
   }
 
-  Widget _buildTextField(
-      TextEditingController controller, String labelText,
+  // Future<void> _createProduct(Product product) async {
+  //   final response = await http.post(
+  //     Uri.parse('http://localhost:3000/products'),
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: jsonEncode(product.toJson()),
+  //   );
+
+  //   if (response.statusCode != 201) {
+  //     throw Exception('Failed to create product');
+  //   }
+  // }
+
+  Widget _buildTextField(TextEditingController controller, String labelText,
       {TextInputType inputType = TextInputType.text}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0),
@@ -190,21 +242,21 @@ class _NewInventoryState extends State<NewInventory> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Inventory Grid'),
+        title: Text('Products (${_products.length})'),
         backgroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 4, // Number of columns in the grid
             crossAxisSpacing: 8.0,
             mainAxisSpacing: 8.0,
             childAspectRatio: 4 / 2, // Aspect ratio of each grid item
           ),
-          itemCount: inventory.length,
+          itemCount: _products.length,
           itemBuilder: (context, index) {
-            final item = inventory[index];
+            final item = _products[index];
 
             return Card(
               elevation: 4.0,
@@ -219,23 +271,23 @@ class _NewInventoryState extends State<NewInventory> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          item['name'],
-                          style: const TextStyle(
+                          item.name,
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18.0,
                           ),
                         ),
-                        const SizedBox(height: 8.0),
+                        SizedBox(height: 8.0),
                         Text(
-                          'Description: ${item['description']}',
+                          'Description: ${item.description}',
                           style: TextStyle(color: Colors.grey[700]),
                         ),
                         Text(
-                          'Model: ${item['model']}',
+                          'Price: \$${item.price}',
                           style: TextStyle(color: Colors.grey[700]),
                         ),
                         Text(
-                          'Quantity: ${item['quantity']}',
+                          'Quantity: ${item.quantity}',
                           style: TextStyle(color: Colors.grey[700]),
                         ),
                       ],
@@ -245,7 +297,7 @@ class _NewInventoryState extends State<NewInventory> {
                     right: 8.0,
                     top: 8.0,
                     child: IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.edit,
                         color: Colors.blueAccent,
                       ),
@@ -260,8 +312,8 @@ class _NewInventoryState extends State<NewInventory> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addItem,
+        child: Icon(Icons.add),
         backgroundColor: Colors.blueAccent,
-        child: const Icon(Icons.add),
       ),
     );
   }
