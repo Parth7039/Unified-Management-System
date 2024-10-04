@@ -13,14 +13,18 @@ class SalesData {
 
 // Function to fetch sales data from the API
 Future<List<SalesData>> fetchSalesData() async {
-  final response = await http.get(Uri.parse('http://192.168.0.105:3000/sales/analysis'));
+  final response =
+      await http.get(Uri.parse('http://192.168.12.63:3000/sales/analysis'));
 
   if (response.statusCode == 200) {
     // Parse the JSON response
     final List<dynamic> jsonResponse = json.decode(response.body);
-    
+
     // Convert JSON data to List<SalesData>
-    return jsonResponse.map((data) => SalesData(data['productName'], data['totalQuantitySold'])).toList();
+    return jsonResponse
+        .map(
+            (data) => SalesData(data['productName'], data['totalQuantitySold']))
+        .toList();
   } else {
     throw Exception('Failed to load sales data');
   }
@@ -37,13 +41,18 @@ class SalesOverviewPage extends StatelessWidget {
         future: fetchSalesData(), // Call the API to fetch data
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator()); // Show a loading indicator
+            return Center(
+                child: CircularProgressIndicator()); // Show a loading indicator
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}')); // Show an error message
+            return Center(
+                child:
+                    Text('Error: ${snapshot.error}')); // Show an error message
           } else if (snapshot.hasData) {
-            return SalesChart(snapshot.data!); // Pass the fetched data to SalesChart
+            return SalesChart(
+                snapshot.data!); // Pass the fetched data to SalesChart
           } else {
-            return Center(child: Text('No data available')); // Handle no data case
+            return Center(
+                child: Text('No data available')); // Handle no data case
           }
         },
       ),
@@ -75,4 +84,3 @@ class SalesChart extends StatelessWidget {
     );
   }
 }
-

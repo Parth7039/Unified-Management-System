@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:ums/Feature/Sales/sales_services.dart';
 import '../Inventory/Models/product_model.dart';
 import '../Inventory/Services/product_services.dart';
@@ -37,7 +36,8 @@ class _SalespreviewpageState extends State<Salespreviewpage> {
   // Fetch all products from the API
   Future<void> fetchProducts() async {
     try {
-      inventory = await productService.getAllProducts(); // Assuming you have a method to get all products
+      inventory = await productService
+          .getAllProducts(); // Assuming you have a method to get all products
       setState(() {});
     } catch (e) {
       // Handle any exceptions here
@@ -45,13 +45,14 @@ class _SalespreviewpageState extends State<Salespreviewpage> {
     }
   }
 
-Future<void> handleSale() async {
+  Future<void> handleSale() async {
     final String buyerName = buyerController.text;
     final String productId = selectedItem?.id ?? '';
     final int quantitySold = int.tryParse(itemQuantityController.text) ?? 0;
 
     try {
-      await saleService.createSale(buyerName, productId, quantitySold, null); // No date provided
+      await saleService.createSale(
+          buyerName, productId, quantitySold, null); // No date provided
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Sale recorded successfully!')),
@@ -69,7 +70,7 @@ Future<void> handleSale() async {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sales Page'),
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -116,15 +117,15 @@ Future<void> handleSale() async {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-
                 handleSale();
+                print("Buyer${buyerController.text}");
                 buyerController.clear();
-                itemQuantityController.clear();                
+                itemQuantityController.clear();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
               ),
-              child: const Text('Sell'),
+              child: const Text('Record Sales'),
             ),
             const SizedBox(height: 32),
 
