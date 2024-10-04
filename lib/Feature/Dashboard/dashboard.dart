@@ -14,34 +14,34 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1E1E2F), // Darker theme color
+        backgroundColor: const Color(0xFFEDE7F6), // Light Purple for the app bar
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF7E57C2)), // Darker Purple for contrast
           onPressed: () {
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => const HomePage()));
           },
         ),
-        title: const Text('Dashboard', style: TextStyle(color: Colors.white)),
+        title: const Text('Dashboard', style: TextStyle(color: Color(0xFF7E57C2))), // Darker Purple text
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Overview', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black)),
+            const Text('Overview', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF7E57C2))),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildStatCard('Active Contracts', '5', const Color(0xFF4CAF50)), // Green
-                _buildStatCard('Completed Contracts', '10', const Color(0xFF2196F3)), // Blue
-                _buildStatCard('Total Purchase', '₹40,000', const Color(0xFFFF9800)), // Orange
-                _buildStatCard('Total Sales', '₹90,000', const Color(0xFFF44336)), // Red
+                _buildStatCard('Active Contracts', '5', const Color(0xFFD1C4E9)), // Light Purple
+                _buildStatCard('Completed Contracts', '10', const Color(0xFFB39DDB)), // Soft Purple
+                _buildStatCard('Total Purchase', '₹40,000', const Color(0xFF9575CD)), // Medium Purple
+                _buildStatCard('Total Sales', '₹90,000', const Color(0xFF7E57C2)), // Darker Purple
               ],
             ),
             const SizedBox(height: 20),
-            const Text('Sales and Inventory Overview', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black)),
+            const Text('Sales and Inventory Overview', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF7E57C2))),
             const SizedBox(height: 10),
 
             // Row containing both Line Graph and Pie Chart
@@ -53,7 +53,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     height: 200,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF2C2C3E),
+                      color: const Color(0xFFEDE7F6), // Light Purple background
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: LineChart(
@@ -80,7 +80,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               const FlSpot(6, 2.6),
                             ],
                             isCurved: true,
-                            color: Colors.orangeAccent,
+                            color: Colors.deepPurple,
                             dotData: FlDotData(show: false),
                           ),
                         ],
@@ -96,7 +96,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     height: 200,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF2C2C3E),
+                      color: const Color(0xFFEDE7F6), // Light Purple background
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: PieChart(
@@ -104,38 +104,38 @@ class _DashboardPageState extends State<DashboardPage> {
                         sections: [
                           PieChartSectionData(
                             value: 30,
-                            color: Colors.blue,
+                            color: const Color(0xFF9575CD), // Medium Purple
                             title: '30%',
                             radius: 60,
                             titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
                           ),
                           PieChartSectionData(
                             value: 25,
-                            color: Colors.red,
+                            color: const Color(0xFF7E57C2), // Dark Purple
                             title: '25%',
                             radius: 60,
                             titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
                           ),
                           PieChartSectionData(
                             value: 20,
-                            color: Colors.green,
+                            color: const Color(0xFFB39DDB), // Soft Purple
                             title: '20%',
                             radius: 60,
                             titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
                           ),
                           PieChartSectionData(
                             value: 15,
-                            color: Colors.orange,
+                            color: const Color(0xFFD1C4E9), // Light Purple
                             title: '15%',
                             radius: 60,
                             titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
                           ),
                           PieChartSectionData(
                             value: 10,
-                            color: Colors.purple,
+                            color: const Color(0xFFEDE7F6), // Very Light Purple
                             title: '10%',
                             radius: 60,
-                            titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
+                            titleStyle: const TextStyle(fontSize: 16, color: Colors.deepPurple),
                           ),
                         ],
                       ),
@@ -146,12 +146,12 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
 
             const SizedBox(height: 20),
-            const Text('Ongoing Projects', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black)),
+            const Text('Ongoing Projects', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF7E57C2))),
             const SizedBox(height: 10),
             Expanded(
               child: Card(
                 elevation: 4,
-                color: const Color(0xFF2C2C3E), // Dark background for the list
+                color: const Color(0xFFEDE7F6), // Light Purple background for the list
                 child: ListView(
                   padding: const EdgeInsets.all(16.0),
                   children: [
@@ -172,20 +172,20 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget _buildStatCard(String title, String value, Color color) {
     return Card(
       elevation: 4,
-      color: const Color(0xFF1E1E2F), // Dark card background
+      color: const Color(0xFFEDE7F6), // Light Purple background for stat cards
       child: Container(
         padding: const EdgeInsets.all(16),
         width: 180,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: color.withOpacity(0.2), // Slightly lighter card color
+          color: color.withOpacity(0.2), // Lighter tone of the color
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.deepPurple)),
             const SizedBox(height: 8),
-            Text(value, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
+            Text(value, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.deepPurple)),
           ],
         ),
       ),
@@ -197,9 +197,9 @@ class _DashboardPageState extends State<DashboardPage> {
       elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-        subtitle: Text(subtitle, style: const TextStyle(color: Colors.white70)),
-        tileColor: const Color(0xFF3C3C4F), // Darker tile color
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.deepPurple)),
+        subtitle: Text(subtitle, style:  TextStyle(color: Colors.deepPurple.shade200)),
+        tileColor: const Color(0xFFD1C4E9), // Light Purple for tiles
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
