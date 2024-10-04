@@ -21,16 +21,19 @@ class _InventoryPieChartState extends State<InventoryPieChart> {
 
   Future<void> fetchInventoryData() async {
     try {
-      final response = await http.get(Uri.parse('http://192.168.0.105:3000/inventory/analysis'));
+      final response = await http
+          .get(Uri.parse('http://192.168.0.105:3000/inventory/analysis'));
 
       if (response.statusCode == 200) {
         // Parse the JSON response
         final List<dynamic> jsonResponse = json.decode(response.body);
         print(jsonResponse.toString());
-        
+
         // Convert JSON data to List<InventoryData>
         setState(() {
-          inventoryData = jsonResponse.map((data) => InventoryData(data['name'], data['quantity'])).toList();
+          inventoryData = jsonResponse
+              .map((data) => InventoryData(data['name'], data['quantity']))
+              .toList();
           isLoading = false;
         });
       } else {
@@ -47,18 +50,19 @@ class _InventoryPieChartState extends State<InventoryPieChart> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Inventory Distribution'),
-      ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : errorMessage.isNotEmpty
-              ? Center(child: Text('Error: $errorMessage'))
-              : _buildPieChart());
+        appBar: AppBar(
+          title: Text('Inventory Distribution'),
+        ),
+        body: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : errorMessage.isNotEmpty
+                ? Center(child: Text('Error: $errorMessage'))
+                : _buildPieChart());
   }
 
   Widget _buildPieChart() {
-    double totalQuantity = inventoryData.fold(0, (sum, item) => sum + item.quantity);
+    double totalQuantity =
+        inventoryData.fold(0, (sum, item) => sum + item.quantity);
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -69,8 +73,11 @@ class _InventoryPieChartState extends State<InventoryPieChart> {
           PieSeries<InventoryData, String>(
             dataSource: inventoryData,
             xValueMapper: (InventoryData inventory, _) => inventory.productName,
-            yValueMapper: (InventoryData inventory, _) => (totalQuantity > 0) ? (inventory.quantity / totalQuantity) * 100 : 0,
-            dataLabelMapper: (InventoryData inventory, _) => '${inventory.productName}: ${((inventory.quantity / totalQuantity) * 100).toStringAsFixed(1)}%',
+            yValueMapper: (InventoryData inventory, _) => (totalQuantity > 0)
+                ? (inventory.quantity / totalQuantity) * 100
+                : 0,
+            dataLabelMapper: (InventoryData inventory, _) =>
+                '${inventory.productName}: ${((inventory.quantity / totalQuantity) * 100).toStringAsFixed(1)}%',
             enableTooltip: true,
           ),
         ],
