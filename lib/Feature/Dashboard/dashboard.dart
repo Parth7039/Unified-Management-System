@@ -30,7 +30,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Future<void> fetchInventoryData() async {
     try {
       final response = await http
-          .get(Uri.parse('http://192.168.12.63:3000/inventory/analysis'));
+          .get(Uri.parse('http://localhost:3000/inventory/analysis'));
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = json.decode(response.body);
@@ -54,7 +54,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Future<void> fetchSalesData() async {
     try {
       final response =
-          await http.get(Uri.parse('http://192.168.12.63:3000/sales/analysis'));
+          await http.get(Uri.parse('http://localhost:3000/sales/analysis'));
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = json.decode(response.body);

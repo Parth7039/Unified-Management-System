@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class SaleService {
   final String baseUrl =
-      'http://192.168.12.63:3000/sales'; // Update with your API URL
+      'http://localhost:3000/sales'; // Update with your API URL
 
   Future<void> createSale(String buyerName, String productId, int quantitySold,
       DateTime? dateOfPurchase) async {
