@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ums/Feature/Inventory/Models/product_category_model.dart';
 import 'package:ums/Feature/Inventory/Screens/product.dart';
 import 'package:ums/Feature/Inventory/Services/product_services.dart';
+import 'package:ums/Feature/Inventory/Services/category_services.dart';
 
 class Inventory_Grid extends StatefulWidget {
   const Inventory_Grid({super.key});
@@ -11,10 +12,8 @@ class Inventory_Grid extends StatefulWidget {
 }
 
 class _Inventory_GridState extends State<Inventory_Grid> {
-  
   List<ProductCategory> inventory = [];
-  final ProductService productService = ProductService();
-
+  final CategoryService categoryService = CategoryService();
 
   @override
   void initState() {
@@ -23,20 +22,20 @@ class _Inventory_GridState extends State<Inventory_Grid> {
     fetchCategories();
   }
 
-  fetchCategories()async{
-    inventory = await productService.getCategories();
-    setState(() {
-    });
-  
+  fetchCategories() async {
+    inventory = await categoryService.getCategories();
+    setState(() {});
   }
 
-  createCategory(String catName,String catDesc,String imageUrl)async{
-    
-    ProductCategory cat = await productService.createCategory(ProductCategory(categoryName: catName, categoryDescription: catDesc, categoryImageUrl: imageUrl));
-    inventory = await productService.getCategories();
-    setState(() {
-    });
+  createCategory(String catName, String catDesc, String imageUrl) async {
+    ProductCategory cat = await categoryService.createCategory(ProductCategory(
+        categoryName: catName,
+        categoryDescription: catDesc,
+        categoryImageUrl: imageUrl));
+    inventory = await categoryService.getCategories();
+    setState(() {});
   }
+
   void _showAddItemDialog() {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController descriptionController = TextEditingController();
@@ -78,7 +77,8 @@ class _Inventory_GridState extends State<Inventory_Grid> {
                 if (nameController.text.isNotEmpty &&
                     descriptionController.text.isNotEmpty &&
                     imageController.text.isNotEmpty) {
-                  createCategory(nameController.text, descriptionController.text, imageController.text);
+                  createCategory(nameController.text,
+                      descriptionController.text, imageController.text);
                   Navigator.of(context).pop();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -86,6 +86,7 @@ class _Inventory_GridState extends State<Inventory_Grid> {
                   );
                 }
               },
+              child: const Text('Add'),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.blueAccent,
@@ -93,7 +94,6 @@ class _Inventory_GridState extends State<Inventory_Grid> {
                   borderRadius: BorderRadius.circular(15.0),
                 ),
               ),
-              child: const Text('Add'),
             ),
           ],
         );
@@ -101,8 +101,7 @@ class _Inventory_GridState extends State<Inventory_Grid> {
     );
   }
 
-  Widget _buildTextField(
-      TextEditingController controller, String labelText,
+  Widget _buildTextField(TextEditingController controller, String labelText,
       {TextInputType inputType = TextInputType.text}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0),
@@ -125,7 +124,7 @@ class _Inventory_GridState extends State<Inventory_Grid> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Inventory Grid'),
+        title: Text('Categories (${inventory.length})'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -146,7 +145,10 @@ class _Inventory_GridState extends State<Inventory_Grid> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const NewInventory(),
+                    builder: (context) => ProductScreen(
+                      categoryId: item
+                          .id!, // Passing the categoryId to ProductListScreen
+                    ),
                   ),
                 );
               },
@@ -164,17 +166,21 @@ class _Inventory_GridState extends State<Inventory_Grid> {
                       // ignore: unnecessary_null_comparison
                       child: item.categoryImageUrl != null
                           ? Image.network(
-                        item.categoryImageUrl,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.error); // Fallback if image fails to load
-                        },
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return const Center(child: CircularProgressIndicator());
-                        },
-                      )
-                          : const Icon(Icons.image_not_supported), // Fallback if image is null
+                              item.categoryImageUrl,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons
+                                    .error); // Fallback if image fails to load
+                              },
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              },
+                            )
+                          : const Icon(Icons
+                              .image_not_supported), // Fallback if image is null
                     ),
                     const SizedBox(height: 8.0),
                     Text(
@@ -186,7 +192,8 @@ class _Inventory_GridState extends State<Inventory_Grid> {
                     ),
                     const SizedBox(height: 4.0),
                     Text(
-                      item.categoryDescription ?? 'No description available', // Fallback for null description
+                      item.categoryDescription ??
+                          'No description available', // Fallback for null description
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 12.0,
@@ -201,8 +208,8 @@ class _Inventory_GridState extends State<Inventory_Grid> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddItemDialog,
-        backgroundColor: Colors.blueAccent,
         child: const Icon(Icons.add),
+        backgroundColor: Colors.blueAccent,
       ),
     );
   }

@@ -5,7 +5,6 @@ import 'package:ums/Feature/Inventory/Screens/product_category.dart';
 import 'package:ums/Feature/Inventory/Screens/inventory_analysis.dart';
 import 'package:ums/Feature/Sales/sales_analysis.dart';
 
-
 import 'Feature/Dashboard/dashboard.dart';
 import 'Feature/Sales/sales.dart';
 import 'Screens/InventoryPage.dart';
@@ -43,13 +42,15 @@ class _HomePageState extends State<HomePage> {
         elevation: 4,
         titleSpacing: 0,
         leading: IconButton(
-          icon: Icon(isDrawerOpen ? Icons.close : Icons.menu, color: Colors.white),
+          icon: Icon(isDrawerOpen ? Icons.close : Icons.menu,
+              color: Colors.white),
           onPressed: _toggleDrawer,
         ),
         title: Row(
           children: [
             IconButton(
-              icon: const Icon(Icons.add_circle_outline, color: Colors.greenAccent),
+              icon: const Icon(Icons.add_circle_outline,
+                  color: Colors.greenAccent),
               onPressed: () {
                 // Handle the + action
               },
@@ -84,7 +85,8 @@ class _HomePageState extends State<HomePage> {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.calendar_today_outlined, color: Colors.white),
+            icon:
+                const Icon(Icons.calendar_today_outlined, color: Colors.white),
             onPressed: () {
               // Handle calendar action
             },
@@ -115,12 +117,18 @@ class _HomePageState extends State<HomePage> {
                   child: ListView(
                     padding: EdgeInsets.zero,
                     children: [
-                      _buildDrawerItem(Icons.dashboard, 'Dashboard', const DashboardPage()),
-                      _buildDrawerItem(Icons.inventory, 'Inventory', const InventoryPage()),
-                      _buildDrawerItem(Icons.add_task_rounded, 'Contracts', const ContractsPage()),
-                      _buildDrawerItem(Icons.settings, 'Settings', const Inventory_Grid()),
-                      _buildDrawerItem(Icons.receipt_long, 'Billing', const AddinvoicePage()),
-                      _buildDrawerItem(Icons.point_of_sale_sharp, 'Sales', const Salespreviewpage()),
+                      _buildDrawerItem(
+                          Icons.dashboard, 'Dashboard', const DashboardPage()),
+                      _buildDrawerItem(
+                          Icons.inventory, 'Inventory', const Inventory_Grid()),
+                      _buildDrawerItem(Icons.add_task_rounded, 'Contracts',
+                          const ContractsPage()),
+                      // _buildDrawerItem(
+                      //     Icons.settings, 'Settings', const Inventory_Grid()),
+                      _buildDrawerItem(Icons.receipt_long, 'Billing',
+                          const AddinvoicePage()),
+                      _buildDrawerItem(Icons.point_of_sale_sharp, 'Sales',
+                          const Salespreviewpage()),
                     ],
                   ),
                 ),
@@ -145,12 +153,16 @@ class _HomePageState extends State<HomePage> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: selectedPage.runtimeType == page.runtimeType ? Colors.grey.shade700 : Colors.transparent, // Highlight selected item
+          color: selectedPage.runtimeType == page.runtimeType
+              ? Colors.grey.shade700
+              : Colors.transparent, // Highlight selected item
           borderRadius: BorderRadius.circular(10),
         ),
         child: ListTile(
           leading: Icon(icon, color: Colors.white),
-          title: isDrawerOpen ? Text(title, style: const TextStyle(color: Colors.white)) : null, // Conditionally render title
+          title: isDrawerOpen
+              ? Text(title, style: const TextStyle(color: Colors.white))
+              : null, // Conditionally render title
         ),
       ),
     );

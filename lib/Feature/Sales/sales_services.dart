@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class SaleService {
-  final String baseUrl = 'http://192.168.0.105:3000/sales'; // Update with your API URL
+  final String baseUrl =
+      'http://localhost:3000/sales'; // Update with your API URL
 
-  Future<void> createSale(String buyerName, String productId, int quantitySold, DateTime? dateOfPurchase) async {
+  Future<void> createSale(String buyerName, String productId, int quantitySold,
+      DateTime? dateOfPurchase) async {
     final response = await http.post(
       Uri.parse(baseUrl),
       headers: {
@@ -15,7 +17,8 @@ class SaleService {
         'buyerName': buyerName,
         'productId': productId,
         'quantitySold': quantitySold,
-        'dateOfPurchase': dateOfPurchase?.toIso8601String(), // Convert DateTime to ISO format if provided
+        'dateOfPurchase': dateOfPurchase
+            ?.toIso8601String(), // Convert DateTime to ISO format if provided
       }),
     );
 
