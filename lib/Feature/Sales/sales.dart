@@ -124,7 +124,7 @@ Future<void> handleSale() async {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
               ),
-              child: const Text('Sell'),
+              child:  Text('Record Sales',style: TextStyle(color: Colors.white),),
             ),
             const SizedBox(height: 32),
 
