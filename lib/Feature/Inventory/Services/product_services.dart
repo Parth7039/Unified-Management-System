@@ -97,7 +97,7 @@ class ProductService {
   Future<List<Product>> getAllProducts() async {
     List<Product> allProducts = [];
     final response = await http.get(
-      Uri.parse('http://localhost:3000/inventory'),
+      Uri.parse('http://192.168.0.105:3000/inventory'),
       headers: {
         "Accept": "application/json",
         "Access-Control-Allow-Origin": "*",

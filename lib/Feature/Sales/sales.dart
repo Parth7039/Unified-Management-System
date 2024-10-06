@@ -15,21 +15,16 @@ class _SalespreviewpageState extends State<Salespreviewpage> {
   final TextEditingController itemQuantityController = TextEditingController();
 
   List<Product> inventory = [];
+  List<Map<String, dynamic>> salesHistory = [];
   ProductService productService = ProductService();
   SaleService saleService = SaleService();
   Product? selectedItem;
 
-  // Sample static sales data for display
-  final List<Map<String, dynamic>> salesHistory = [
-    {'buyer': 'John Doe', 'product': 'Product A', 'quantity': 2, 'date': '2024-10-06'},
-    {'buyer': 'Jane Smith', 'product': 'Product B', 'quantity': 5, 'date': '2024-10-05'},
-    {'buyer': 'Alice Johnson', 'product': 'Product C', 'quantity': 3, 'date': '2024-10-04'},
-  ];
-
   @override
   void initState() {
     super.initState();
-    fetchProducts();
+    fetchProducts();       // Fetch available products
+    fetchLatestSales();    // Fetch latest sales history
   }
 
   @override
@@ -49,6 +44,16 @@ class _SalespreviewpageState extends State<Salespreviewpage> {
     }
   }
 
+  // Fetch the latest sales data
+  Future<void> fetchLatestSales() async {
+    try {
+      salesHistory = await saleService.getLatestSales();
+      setState(() {});  // Update the UI after fetching data
+    } catch (e) {
+      print('Error fetching latest sales: $e');
+    }
+  }
+
   Future<void> handleSale() async {
     final String buyerName = buyerController.text;
     final String productId = selectedItem?.id ?? '';
@@ -59,6 +64,8 @@ class _SalespreviewpageState extends State<Salespreviewpage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Sale recorded successfully!')),
       );
+      // Refresh the sales history after a new sale is recorded
+      fetchLatestSales();
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $error')),
@@ -179,27 +186,26 @@ class _SalespreviewpageState extends State<Salespreviewpage> {
               ),
               const SizedBox(height: 8),
 
-              // Display sales history
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: salesHistory.length,
-                itemBuilder: (context, index) {
-                  final sale = salesHistory[index];
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 5.0),
-                    child: ListTile(
-                      title: Text('${sale['buyer']} - ${sale['product']}'),
-                      subtitle: Text('Quantity: ${sale['quantity']}, Date: ${sale['date']}'),
-                    ),
-                  );
-                },
-              ),
-            const SizedBox(height: 16),
-            // Graph Section
-          ],            
+              if (salesHistory.isEmpty)
+                const Text('No sales data available')
+              else
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: salesHistory.length,
+                  itemBuilder: (context, index) {
+                    final sale = salesHistory[index];
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 5.0),
+                      child: ListTile(
+                        title: Text('${sale['buyerName']} - ${sale['product']}'),
+                        subtitle: Text('Quantity: ${sale['quantitySold']}, Date: ${sale['dateOfPurchase']}'),
+                      ),
+                    );
+                  },
+                ),
+            ],
           ),
-
         ),
       ),
     );
