@@ -10,6 +10,8 @@ class ContractDetailsPage extends StatefulWidget {
   final DateTime startdate;
   final DateTime enddate;
   final String contract_type;
+  final String party_name;
+  final String party_contact;
 
   const ContractDetailsPage({
     super.key,
@@ -21,6 +23,8 @@ class ContractDetailsPage extends StatefulWidget {
     required this.startdate,
     required this.enddate,
     required this.contract_type,
+    required this.party_name,
+    required this.party_contact,
   });
 
   @override
@@ -79,7 +83,8 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
                 ),
                 TextFormField(
                   initialValue: newAdditionalTerms,
-                  decoration: const InputDecoration(labelText: 'Additional Terms'),
+                  decoration:
+                      const InputDecoration(labelText: 'Additional Terms'),
                   onChanged: (value) {
                     newAdditionalTerms = value;
                   },
@@ -123,7 +128,8 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
       appBar: AppBar(
         title: Text(
           title,
-          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style:
+              const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: widget.statusColor,
       ),
@@ -140,7 +146,10 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
                 color: Colors.grey.shade800,
                 borderRadius: BorderRadius.circular(15),
                 boxShadow: const [
-                  BoxShadow(color: Colors.black54, blurRadius: 10, offset: Offset(0, 5)),
+                  BoxShadow(
+                      color: Colors.black54,
+                      blurRadius: 10,
+                      offset: Offset(0, 5)),
                 ],
               ),
               padding: const EdgeInsets.all(16),
@@ -205,7 +214,8 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
                 children: [
                   const Text(
                     'Contract Type:',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     widget.contract_type,
@@ -227,11 +237,15 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
                     const ListTile(
                       title: Text(
                         'Materials',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                       trailing: Text(
                         'Quantity',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.black),
                       ),
                     ),
                     Expanded(
@@ -254,12 +268,14 @@ class _ContractDetailsPageState extends State<ContractDetailsPage> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.redAccent,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
                 ),
                 onPressed: () {
                   // Implement delete functionality here
                 },
-                child: const Text('Delete Contract', style: TextStyle(color: Colors.white)),
+                child: const Text('Delete Contract',
+                    style: TextStyle(color: Colors.white)),
               ),
             ),
           ],
