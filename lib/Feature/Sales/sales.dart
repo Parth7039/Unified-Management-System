@@ -195,8 +195,11 @@ class _SalespreviewpageState extends State<Salespreviewpage> {
                   );
                 },
               ),
-            ],
+            const SizedBox(height: 16),
+            // Graph Section
+          ],            
           ),
+
         ),
       ),
     );
