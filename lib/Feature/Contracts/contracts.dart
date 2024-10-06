@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ums/Feature/Contracts/Services/contract_services.dart';
 import '../../homepage.dart';
 import 'contractdetails.dart';
-import 'models/Contractmodel.dart';
+import './Models/contract_model.dart';
 
 class ContractsPage extends StatefulWidget {
   const ContractsPage({super.key});
@@ -11,47 +12,20 @@ class ContractsPage extends StatefulWidget {
 }
 
 class _ContractsPageState extends State<ContractsPage> {
+  late ContractService _contractService;
+  List<Contract> _contracts = [];
+  List<Contract> filteredContracts = [];
+  bool _isLoading = true;
   final TextEditingController _startdateController = TextEditingController();
   final TextEditingController _enddateController = TextEditingController();
-
-  // Selected filters (if any)
-  String? contractType; // "Government" or "Private"
-  String? contractStatus; // "Active", "Inactive", "Completed"
-
-  // Sample list of contracts
-  List<Contract> contracts = [
-    Contract(
-      name: 'Sapphire Heights',
-      details: 'Complete electrical wiring of wing A & B',
-      duration: '2 months',
-      additionalTerms: 'None for now',
-      startDate: DateTime.now(),
-      endDate: DateTime.now().add(const Duration(days: 180)),
-      partyName: 'Party A',
-      partyContact: '1234567890',
-      contractType: 'Private',
-      contractStatus: 'Active',
-    ),
-    Contract(
-      name: 'Contract 2',
-      details: 'Details about contract 2',
-      duration: '1 year',
-      additionalTerms: 'Term 2',
-      startDate: DateTime.now(),
-      endDate: DateTime.now().add(const Duration(days: 365)),
-      partyName: 'Party B',
-      partyContact: '0987654321',
-      contractType: 'Government',
-      contractStatus: 'Inactive',
-    ),
-  ];
-
-  List<Contract> filteredContracts = [];
 
   @override
   void initState() {
     super.initState();
-    filteredContracts = List.from(contracts);
+    _contractService = ContractService();
+    // _startdateController.text = _formatDate(widget.contract.effectiveDate);
+    // _enddateController.text = _formatDate(widget.contract.endDate);
+    _fetchContracts(); // Fetch contracts when the page loads
   }
 
   @override
@@ -59,6 +33,28 @@ class _ContractsPageState extends State<ContractsPage> {
     _startdateController.dispose();
     _enddateController.dispose();
     super.dispose();
+  }
+
+  Future<void> _fetchContracts() async {
+    try {
+      List<Contract> contracts = await _contractService.fetchContracts();
+      setState(() {
+        _contracts = contracts;
+        filteredContracts = contracts;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching contracts: $e');
+    }
+  }
+
+  Future<void> _addContract(Contract contract) async {
+    try {
+      await _contractService.addContract(contract);
+      _fetchContracts(); // Re-fetch contracts after adding
+    } catch (e) {
+      print('Error adding contract: $e');
+    }
   }
 
   @override
@@ -109,10 +105,14 @@ class _ContractsPageState extends State<ContractsPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildContractCard('Active Contracts', _countContracts('Active')),
-                  _buildContractCard('Inactive Contracts', _countContracts('Inactive')),
-                  _buildContractCard('Completed Contracts', _countContracts('Completed')),
-                  _buildContractCard('Total Contracts', contracts.length.toString()),
+                  _buildContractCard(
+                      'Active Contracts', _countContracts('Active')),
+                  _buildContractCard(
+                      'Inactive Contracts', _countContracts('Inactive')),
+                  _buildContractCard(
+                      'Completed Contracts', _countContracts('Completed')),
+                  _buildContractCard(
+                      'Total Contracts', _contracts.length.toString()),
                 ],
               ),
             ),
@@ -137,9 +137,11 @@ class _ContractsPageState extends State<ContractsPage> {
                           filled: true,
                           fillColor: Colors.grey.shade700,
                           hintText: 'Search contracts..',
-                          prefixIcon: const Icon(Icons.search, color: Colors.tealAccent),
+                          prefixIcon: const Icon(Icons.search,
+                              color: Colors.tealAccent),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.tealAccent),
+                            borderSide:
+                                const BorderSide(color: Colors.tealAccent),
                             borderRadius: BorderRadius.circular(15),
                           ),
                           border: OutlineInputBorder(
@@ -151,13 +153,22 @@ class _ContractsPageState extends State<ContractsPage> {
                         onChanged: (value) {
                           setState(() {
                             if (value.isEmpty) {
-                              filteredContracts = List.from(contracts);
+                              filteredContracts = List.from(_contracts);
                             } else {
-                              filteredContracts = contracts.where((contract) =>
-                              contract.name.toLowerCase().contains(value.toLowerCase()) ||
-                                  contract.details.toLowerCase().contains(value.toLowerCase()) ||
-                                  contract.partyName.toLowerCase().contains(value.toLowerCase()))
-                                  .toList();
+                              filteredContracts = _contracts.where((contract) {
+                                final partyName =
+                                    contract.partyDetails?.partyName ??
+                                        ''; // Safely handle null values
+                                return contract.contractName
+                                        .toLowerCase()
+                                        .contains(value.toLowerCase()) ||
+                                    contract.details
+                                        .toLowerCase()
+                                        .contains(value.toLowerCase()) ||
+                                    partyName
+                                        .toLowerCase()
+                                        .contains(value.toLowerCase());
+                              }).toList();
                             }
                           });
                         },
@@ -167,9 +178,9 @@ class _ContractsPageState extends State<ContractsPage> {
                     SizedBox(
                       height: 600, // Adjust based on your UI needs
                       child: ListView.builder(
-                        itemCount: filteredContracts.length,
+                        itemCount: _contracts.length,
                         itemBuilder: (context, index) {
-                          return _buildContractListTile(filteredContracts[index]);
+                          return _buildContractListTile(_contracts[index]);
                         },
                       ),
                     ),
@@ -185,7 +196,10 @@ class _ContractsPageState extends State<ContractsPage> {
 
   // Helper method to count contracts based on status
   String _countContracts(String status) {
-    return contracts.where((contract) => contract.contractStatus == status).length.toString();
+    return _contracts
+        .where((contract) => contract.status == status)
+        .length
+        .toString();
   }
 
   // Helper method to build contract summary cards
@@ -208,7 +222,8 @@ class _ContractsPageState extends State<ContractsPage> {
           children: [
             Text(
               title,
-              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold, color: Colors.white),
             ),
             const SizedBox(height: 10),
             Text(
@@ -224,7 +239,7 @@ class _ContractsPageState extends State<ContractsPage> {
   // Helper method to build each contract list tile
   Widget _buildContractListTile(Contract contract) {
     Color statusColor;
-    switch (contract.contractStatus) {
+    switch (contract.status) {
       case 'Active':
         statusColor = Colors.greenAccent;
         break;
@@ -245,15 +260,21 @@ class _ContractsPageState extends State<ContractsPage> {
       child: ListTile(
         contentPadding: const EdgeInsets.all(16),
         title: Text(
-          contract.name,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+          contract.contractName,
+          style: const TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 4),
             Text(
-              'Start: ${_formatDate(contract.startDate)}',
+              'Type: ${contract.contractType}',
+              style: const TextStyle(color: Colors.white70, fontSize: 14),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Start: ${_formatDate(contract.effectiveDate)}',
               style: const TextStyle(color: Colors.white70, fontSize: 14),
             ),
             const SizedBox(height: 4),
@@ -261,6 +282,26 @@ class _ContractsPageState extends State<ContractsPage> {
               'End: ${_formatDate(contract.endDate)}',
               style: const TextStyle(color: Colors.white70, fontSize: 14),
             ),
+            const SizedBox(height: 4),
+            Text(
+              'Additional Terms: ${contract.additionalTerms ?? 'No additional terms'}',
+              style: const TextStyle(color: Colors.white70, fontSize: 14),
+            ),
+            const SizedBox(height: 4),
+            if (contract.partyDetails != null)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Party Name: ${contract.partyDetails!.partyName}',
+                    style: const TextStyle(color: Colors.white70, fontSize: 14),
+                  ),
+                  Text(
+                    'Party Contact: ${contract.partyDetails!.partyContact}',
+                    style: const TextStyle(color: Colors.white70, fontSize: 14),
+                  ),
+                ],
+              ),
           ],
         ),
         trailing: Column(
@@ -269,8 +310,9 @@ class _ContractsPageState extends State<ContractsPage> {
             Icon(Icons.circle, color: statusColor),
             const SizedBox(height: 2),
             Text(
-              contract.contractStatus,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              contract.status,
+              style: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -279,14 +321,18 @@ class _ContractsPageState extends State<ContractsPage> {
             context,
             MaterialPageRoute(
               builder: (context) => ContractDetailsPage(
-                title: contract.name,
+                title: contract.contractName,
                 subtitle: contract.details,
                 statusColor: statusColor,
                 duration: contract.duration,
-                additional_terms: contract.additionalTerms,
-                startdate: contract.startDate,
+                additional_terms:
+                    contract.additionalTerms ?? 'No additional terms',
+                startdate: contract.effectiveDate,
                 enddate: contract.endDate,
                 contract_type: contract.contractType,
+                party_name: contract.partyDetails?.partyName ?? 'No party',
+                party_contact:
+                    contract.partyDetails?.partyContact ?? 'No contact',
               ),
             ),
           );
@@ -302,12 +348,12 @@ class _ContractsPageState extends State<ContractsPage> {
 
   // Custom Text Field Widget for reuse
   Widget customTextField(
-      String labelText,
-      String hintText, {
-        required TextEditingController controller,
-        bool isPassword = false,
-        TextInputType keyboardType = TextInputType.text,
-      }) {
+    String labelText,
+    String hintText, {
+    required TextEditingController controller,
+    bool isPassword = false,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.4, // 40% of screen width
       child: TextField(
@@ -323,18 +369,22 @@ class _ContractsPageState extends State<ContractsPage> {
           labelText: labelText,
           labelStyle: const TextStyle(color: Colors.white),
           hintStyle: const TextStyle(color: Colors.grey),
-          prefixIcon: isPassword ? const Icon(Icons.lock, color: Colors.tealAccent) : null,
+          prefixIcon: isPassword
+              ? const Icon(Icons.lock, color: Colors.tealAccent)
+              : null,
           suffixIcon: isPassword
               ? IconButton(
-            icon: Icon(
-              // Toggle password visibility (if needed)
-              controller.text.isEmpty ? Icons.visibility_off : Icons.visibility,
-              color: Colors.tealAccent,
-            ),
-            onPressed: () {
-              // Implement visibility toggle if needed
-            },
-          )
+                  icon: Icon(
+                    // Toggle password visibility (if needed)
+                    controller.text.isEmpty
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                    color: Colors.tealAccent,
+                  ),
+                  onPressed: () {
+                    // Implement visibility toggle if needed
+                  },
+                )
               : null,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
@@ -381,14 +431,18 @@ class _ContractsPageState extends State<ContractsPage> {
         child: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return SizedBox(
-              width: MediaQuery.of(context).size.width * 0.9, // Responsive width
+              width:
+                  MediaQuery.of(context).size.width * 0.9, // Responsive width
               child: Column(
                 children: [
-                  const SizedBox(height: 35,),
+                  const SizedBox(
+                    height: 35,
+                  ),
                   const Align(
                     alignment: Alignment.centerLeft,
-                    child: Text('Contract Type', style: TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold)),
+                    child: Text('Contract Type',
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
                   ),
                   SwitchListTile(
                     title: Text(isGovernment ? "Government" : "Private"),
@@ -397,12 +451,11 @@ class _ContractsPageState extends State<ContractsPage> {
                       setState(() {
                         isGovernment = value;
                         selectedContractType =
-                        isGovernment ? "Government" : "Private";
+                            isGovernment ? "Government" : "Private";
                       });
                     },
                     secondary: Icon(
-                        isGovernment ? Icons.account_balance : Icons
-                            .person),
+                        isGovernment ? Icons.account_balance : Icons.person),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -410,30 +463,38 @@ class _ContractsPageState extends State<ContractsPage> {
                       // Left Column
                       Column(
                         children: [
-                          customTextField('Contract Name', 'Enter name here..', controller: nameController),
+                          customTextField('Contract Name', 'Enter name here..',
+                              controller: nameController),
                           const SizedBox(height: 20),
-                          customTextField('Contract Details', 'Enter details here..', controller: detailsController),
+                          customTextField(
+                              'Contract Details', 'Enter details here..',
+                              controller: detailsController),
                           const SizedBox(height: 20),
                           GestureDetector(
                             onTap: () {
-                              _selectStartDate(context, controller: startDateController);
+                              _selectStartDate(context,
+                                  controller: startDateController);
                             },
                             child: AbsorbPointer(
                               child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.4, // Responsive width
+                                width: MediaQuery.of(context).size.width *
+                                    0.4, // Responsive width
                                 child: TextField(
                                   controller: startDateController,
                                   readOnly: true,
                                   decoration: InputDecoration(
                                     labelText: 'Start Date',
-                                    prefixIcon: const Icon(Icons.calendar_today),
+                                    prefixIcon:
+                                        const Icon(Icons.calendar_today),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15),
-                                      borderSide: const BorderSide(color: Colors.black),
+                                      borderSide:
+                                          const BorderSide(color: Colors.black),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15),
-                                      borderSide: const BorderSide(color: Colors.black),
+                                      borderSide:
+                                          const BorderSide(color: Colors.black),
                                     ),
                                   ),
                                 ),
@@ -445,30 +506,39 @@ class _ContractsPageState extends State<ContractsPage> {
                       // Right Column
                       Column(
                         children: [
-                          customTextField('Contract Duration', 'Enter duration here..', controller: durationController),
+                          customTextField(
+                              'Contract Duration', 'Enter duration here..',
+                              controller: durationController),
                           const SizedBox(height: 20),
-                          customTextField('Additional Terms', 'Enter additional terms here..', controller: additionalTermsController),
+                          customTextField('Additional Terms',
+                              'Enter additional terms here..',
+                              controller: additionalTermsController),
                           const SizedBox(height: 20),
                           GestureDetector(
                             onTap: () {
-                              _selectEndDate(context, controller: endDateController);
+                              _selectEndDate(context,
+                                  controller: endDateController);
                             },
                             child: AbsorbPointer(
                               child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.4, // Responsive width
+                                width: MediaQuery.of(context).size.width *
+                                    0.4, // Responsive width
                                 child: TextField(
                                   controller: endDateController,
                                   readOnly: true,
                                   decoration: InputDecoration(
                                     labelText: 'End Date',
-                                    prefixIcon: const Icon(Icons.calendar_today),
+                                    prefixIcon:
+                                        const Icon(Icons.calendar_today),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15),
-                                      borderSide: const BorderSide(color: Colors.black),
+                                      borderSide:
+                                          const BorderSide(color: Colors.black),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15),
-                                      borderSide: const BorderSide(color: Colors.black),
+                                      borderSide:
+                                          const BorderSide(color: Colors.black),
                                     ),
                                   ),
                                 ),
@@ -481,26 +551,34 @@ class _ContractsPageState extends State<ContractsPage> {
                   ),
                   const SizedBox(height: 20),
                   // Party Details
-                  isGovernment ? Container() : Column(
-                    children: [
-                      const Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text('Party Details', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          customTextField('Party Name', 'Enter name here..', controller: partyNameController),
-                          customTextField('Party Contact', 'Enter contact here..', controller: partyContactController),
-                        ],
-                      ),
-                    ],
-                  ),
+                  if (!isGovernment)
+                    Column(
+                      children: [
+                        const Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text('Party Details',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold)),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            customTextField('Party Name', 'Enter name here..',
+                                controller: partyNameController),
+                            customTextField(
+                                'Party Contact', 'Enter contact here..',
+                                controller: partyContactController),
+                          ],
+                        ),
+                      ],
+                    ),
                   const SizedBox(height: 20),
                   const Align(
                     alignment: Alignment.centerLeft,
-                    child: Text('Contract Status', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    child: Text('Contract Status',
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
                   ),
                   Column(
                     children: [
@@ -510,7 +588,7 @@ class _ContractsPageState extends State<ContractsPage> {
                         title: const Text("Active"),
                         onChanged: (value) {
                           setState(() {
-                            selectedContractStatus = value;
+                            selectedContractStatus = value as String;
                           });
                         },
                       ),
@@ -520,7 +598,7 @@ class _ContractsPageState extends State<ContractsPage> {
                         title: const Text("Inactive"),
                         onChanged: (value) {
                           setState(() {
-                            selectedContractStatus = value;
+                            selectedContractStatus = value as String;
                           });
                         },
                       ),
@@ -530,7 +608,7 @@ class _ContractsPageState extends State<ContractsPage> {
                         title: const Text("Completed"),
                         onChanged: (value) {
                           setState(() {
-                            selectedContractStatus = value;
+                            selectedContractStatus = value as String;
                           });
                         },
                       ),
@@ -556,7 +634,8 @@ class _ContractsPageState extends State<ContractsPage> {
           onPressed: () {
             // Retrieve current state of the dialog
             final dialogState = context as Element;
-            final StatefulBuilder? builder = dialogState.findAncestorWidgetOfExactType<StatefulBuilder>();
+            final StatefulBuilder? builder =
+                dialogState.findAncestorWidgetOfExactType<StatefulBuilder>();
 
             // Validate input fields
             if (nameController.text.isEmpty ||
@@ -564,7 +643,9 @@ class _ContractsPageState extends State<ContractsPage> {
                 durationController.text.isEmpty ||
                 startDateController.text.isEmpty ||
                 endDateController.text.isEmpty ||
-                (isGovernment == false && (partyNameController.text.isEmpty || partyContactController.text.isEmpty)) ||
+                (isGovernment == false &&
+                    (partyNameController.text.isEmpty ||
+                        partyContactController.text.isEmpty)) ||
                 selectedContractType == null ||
                 selectedContractStatus == null) {
               // Show error message
@@ -586,29 +667,35 @@ class _ContractsPageState extends State<ContractsPage> {
 
             if (endDate.isBefore(startDate)) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('End Date must be after Start Date')),
+                const SnackBar(
+                    content: Text('End Date must be after Start Date')),
               );
               return;
             }
 
             // Create a new contract
             Contract newContract = Contract(
-              name: nameController.text,
+              contractName: nameController.text,
               details: detailsController.text,
               duration: durationController.text,
               additionalTerms: additionalTermsController.text,
-              startDate: startDate,
+              effectiveDate: startDate,
               endDate: endDate,
-              partyName: isGovernment ? '' : partyNameController.text,
-              partyContact: isGovernment ? '' : partyContactController.text,
+              partyDetails: isGovernment
+                  ? null // If it's a government contract, no party details
+                  : Party(
+                      partyName: partyNameController.text,
+                      partyContact: partyContactController.text,
+                    ),
               contractType: selectedContractType!,
-              contractStatus: selectedContractStatus!,
+              status: selectedContractStatus!,
             );
 
+             _addContract(newContract);
             // Add to contracts list
             setState(() {
-              contracts.add(newContract);
-              filteredContracts = List.from(contracts); // Reset filtered list
+              _contracts.add(newContract);
+              filteredContracts = List.from(_contracts); // Reset filtered list
             });
 
             // Close the dialog
@@ -625,10 +712,13 @@ class _ContractsPageState extends State<ContractsPage> {
   }
 
   // Method to select start date
-  Future<void> _selectStartDate(BuildContext context, {required TextEditingController controller}) async {
+  Future<void> _selectStartDate(BuildContext context,
+      {required TextEditingController controller}) async {
     final DateTime? picked1 = await showDatePicker(
       context: context,
-      initialDate: controller.text.isEmpty ? DateTime.now() : DateTime.parse(controller.text),
+      initialDate: controller.text.isEmpty
+          ? DateTime.now()
+          : DateTime.parse(controller.text),
       firstDate: DateTime(2000),
       lastDate: DateTime(2400),
     );
@@ -641,17 +731,21 @@ class _ContractsPageState extends State<ContractsPage> {
   }
 
   // Method to select end date
-  Future<void> _selectEndDate(BuildContext context, {required TextEditingController controller}) async {
+  Future<void> _selectEndDate(BuildContext context,
+      {required TextEditingController controller}) async {
     DateTime initialDate;
     if (_startdateController.text.isEmpty) {
       initialDate = DateTime.now();
     } else {
-      initialDate = DateTime.tryParse(_startdateController.text) ?? DateTime.now();
+      initialDate =
+          DateTime.tryParse(_startdateController.text) ?? DateTime.now();
     }
 
     final DateTime? picked2 = await showDatePicker(
       context: context,
-      initialDate: controller.text.isEmpty ? initialDate.add(const Duration(days: 1)) : DateTime.parse(controller.text),
+      initialDate: controller.text.isEmpty
+          ? initialDate.add(const Duration(days: 1))
+          : DateTime.parse(controller.text),
       firstDate: initialDate,
       lastDate: DateTime(2400),
     );
@@ -662,5 +756,4 @@ class _ContractsPageState extends State<ContractsPage> {
       });
     }
   }
-
 }
