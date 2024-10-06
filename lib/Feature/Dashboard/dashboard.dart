@@ -14,6 +14,7 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   List<InventoryData> inventoryData = [];
   List<SalesData> salesData = [];
+  List<ContractData> ongoingContracts = []; // Ongoing contracts list
   bool isLoading = true;
   String errorMessage = '';
 
@@ -24,7 +25,7 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Future<void> fetchData() async {
-    await Future.wait([fetchInventoryData(), fetchSalesData()]);
+    await Future.wait([fetchInventoryData(), fetchSalesData(), fetchContractsData()]);
   }
 
   Future<void> fetchInventoryData() async {
@@ -53,16 +54,13 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Future<void> fetchSalesData() async {
     try {
-      final response =
-          await http.get(Uri.parse('http://localhost:3000/sales/analysis'));
+      final response = await http.get(Uri.parse('http://localhost:3000/sales/analysis'));
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = json.decode(response.body);
-        print(jsonResponse.toString());
         setState(() {
           salesData = jsonResponse
-              .map((data) =>
-                  SalesData(data['productName'], data['totalQuantitySold']))
+              .map((data) => SalesData(data['productName'], data['totalQuantitySold']))
               .toList();
           isLoading = false;
         });
@@ -77,50 +75,65 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
+  Future<void> fetchContractsData() async {
+    // Simulate a fetch for ongoing contracts
+    setState(() {
+      ongoingContracts = [
+        ContractData('Website Development', 'In Progress', '31st Oct'),
+        ContractData('Mobile App Redesign', 'In Progress', '15th Nov'),
+        ContractData('Cloud Infrastructure Setup', 'In Progress', '28th Nov'),
+      ];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1E1E2F),
+        backgroundColor: Colors.white,
+        elevation: 0, // Minimalist design - remove shadows
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () {
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => const HomePage()));
           },
         ),
-        title: const Text('Dashboard', style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'Dashboard',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Overview',
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
+            const Text(
+              'Overview',
+              style: TextStyle(
+                  fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+            ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildStatCard(
-                    'Active Contracts', '5', const Color(0xFF4CAF50)), // Green
-                _buildStatCard('Completed Contracts', '10',
-                    const Color(0xFF2196F3)), // Blue
-                _buildStatCard('Total Purchase', '₹40,000',
-                    const Color(0xFFFF9800)), // Orange
-                _buildStatCard(
-                    'Total Sales', '₹90,000', const Color(0xFFF44336)), // Red
+                _buildStatCard('Active Contracts', '5'),
+                const SizedBox(width: 10,),
+                _buildStatCard('Completed Contracts', '10'),
+                const SizedBox(width: 10,),
+                _buildStatCard('Total Purchase', '₹40,000'),
+                const SizedBox(width: 10,),
+                _buildStatCard('Total Sales', '₹90,000'),
+                const SizedBox(width: 10,),
               ],
             ),
             const SizedBox(height: 20),
-            const Text('Sales and Inventory Overview',
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
+            const Text(
+              'Sales and Inventory Overview',
+              style: TextStyle(
+                  fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+            ),
             const SizedBox(height: 10),
             Row(
               children: [
@@ -129,8 +142,14 @@ class _DashboardPageState extends State<DashboardPage> {
                     height: 400,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 224, 224, 230),
+                      color: Colors.white, // Minimalist color
                       borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12, // Soft shadow for depth
+                          blurRadius: 10,
+                        )
+                      ],
                     ),
                     child: isLoading
                         ? const Center(child: CircularProgressIndicator())
@@ -143,8 +162,14 @@ class _DashboardPageState extends State<DashboardPage> {
                     height: 400,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 224, 224, 230),
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 10,
+                        )
+                      ],
                     ),
                     child: isLoading
                         ? const Center(child: CircularProgressIndicator())
@@ -154,51 +179,69 @@ class _DashboardPageState extends State<DashboardPage> {
               ],
             ),
             const SizedBox(height: 20),
-            // const Text('Ongoing Projects',
-            //     style: TextStyle(
-            //         fontSize: 24,
-            //         fontWeight: FontWeight.bold,
-            //         color: Colors.black)),
-            // const SizedBox(height: 10),
-            // // Expanded(
-            //   child: Card(
-            //     elevation: 4,
-            //     color: const Color(0xFF2C2C3E),
-            //     child: ListView(
-            //       padding: const EdgeInsets.all(16.0),
-            //       children: [
-            //         _buildProjectCard('Project 1'),
-            //         _buildProjectCard('Project 2'),
-            //         _buildProjectCard('Project 3'),
-            //       ],
-            //     ),
-            //   ),
-            // ),
+            const Text(
+              'Ongoing Contracts',
+              style: TextStyle(
+                  fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 10,
+                    )
+                  ],
+                ),
+                child: ListView.builder(
+                  itemCount: ongoingContracts.length,
+                  itemBuilder: (context, index) {
+                    return _buildContractCard(ongoingContracts[index]);
+                  },
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatCard(String title, String value, Color color) {
+  Widget _buildStatCard(String title, String value) {
     return Expanded(
-      child: Card(
-        elevation: 4,
-        color: color,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: const TextStyle(color: Colors.white)),
-              const SizedBox(height: 10),
-              Text(value,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold)),
-            ],
-          ),
+      child: Container(
+        padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12, // Minimal shadow
+              blurRadius: 6,
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(color: Colors.black87, fontSize: 14),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              value,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -212,38 +255,74 @@ class _DashboardPageState extends State<DashboardPage> {
       tooltipBehavior: TooltipBehavior(enable: true),
       series: <CartesianSeries<SalesData, String>>[
         LineSeries<SalesData, String>(
-          dataSource: salesData, // Use salesData instead of data
-          xValueMapper: (SalesData sales, _) =>
-              sales.month, // Changed to 'month'
-          yValueMapper: (SalesData sales, _) =>
-              sales.sales, // Changed to 'sales'
+          dataSource: salesData,
+          xValueMapper: (SalesData sales, _) => sales.month,
+          yValueMapper: (SalesData sales, _) => sales.sales,
           name: 'Sales',
-          markerSettings: MarkerSettings(isVisible: true),
+          markerSettings: const MarkerSettings(isVisible: true),
         )
       ],
     );
   }
 
   Widget _buildInventoryPieChart() {
+    // Define a list of colors for each segment
+    final List<Color> colors = [
+      Colors.blue,
+      Colors.red,
+      Colors.green,
+      Colors.orange,
+      Colors.purple,
+      Colors.cyan,
+      Colors.amber,
+      Colors.teal,
+      Colors.indigo,
+      Colors.lime,
+    ];
+
     return SfCircularChart(
+      title: ChartTitle(text: 'Inventory Overview'),
+      legend: Legend(
+        isVisible: true,
+        position: LegendPosition.bottom,
+      ),
+      tooltipBehavior: TooltipBehavior(enable: true),
       series: <CircularSeries>[
         PieSeries<InventoryData, String>(
           dataSource: inventoryData,
           xValueMapper: (InventoryData data, _) => data.name,
           yValueMapper: (InventoryData data, _) => data.quantity,
-          dataLabelMapper: (InventoryData data, _) => data.name,
-          dataLabelSettings: const DataLabelSettings(isVisible: true),
+          dataLabelMapper: (InventoryData data, _) =>
+          '${data.name}: ${data.quantity}',
+          dataLabelSettings: const DataLabelSettings(
+            isVisible: true,
+            labelAlignment: ChartDataLabelAlignment.outer,
+            showZeroValue: false,
+            color: Colors.black,
+          ),
+          enableTooltip: true,
+          pointColorMapper: (InventoryData data, index) {
+            // Assign colors based on the index of the data
+            return colors[index % colors.length]; // Cycle through the colors
+          },
+          explode: true, // Enable explode animation
+          explodeIndex: 0, // Explode the first item
+          animationDuration: 1200, // Duration of the pie chart animation
         )
       ],
     );
   }
 
-  Widget _buildProjectCard(String projectName) {
+
+
+
+  Widget _buildContractCard(ContractData contract) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
-        title: Text(projectName, style: const TextStyle(color: Colors.white)),
-        tileColor: const Color(0xFF4CAF50),
+        title: Text(contract.projectName, style: const TextStyle(color: Colors.black)),
+        subtitle: Text('Status: ${contract.status}\nDue: ${contract.dueDate}'),
+        tileColor: Colors.grey[100],
       ),
     );
   }
@@ -261,4 +340,13 @@ class InventoryData {
   final int quantity;
 
   InventoryData(this.name, this.quantity);
+}
+
+// Class for ongoing contracts
+class ContractData {
+  final String projectName;
+  final String status;
+  final String dueDate;
+
+  ContractData(this.projectName, this.status, this.dueDate);
 }
