@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ums/Feature/Inventory/Models/product_category_model.dart';
 import 'package:ums/Feature/Inventory/Screens/product.dart';
-import 'package:ums/Feature/Inventory/Services/product_services.dart';
 import 'package:ums/Feature/Inventory/Services/category_services.dart';
 
 class Inventory_Grid extends StatefulWidget {
@@ -17,7 +16,6 @@ class _Inventory_GridState extends State<Inventory_Grid> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchCategories();
   }
@@ -28,12 +26,12 @@ class _Inventory_GridState extends State<Inventory_Grid> {
   }
 
   createCategory(String catName, String catDesc, String imageUrl) async {
-    ProductCategory cat = await categoryService.createCategory(ProductCategory(
-        categoryName: catName,
-        categoryDescription: catDesc,
-        categoryImageUrl: imageUrl));
-    inventory = await categoryService.getCategories();
-    setState(() {});
+    await categoryService.createCategory(ProductCategory(
+      categoryName: catName,
+      categoryDescription: catDesc,
+      categoryImageUrl: imageUrl,
+    ));
+    fetchCategories();
   }
 
   void _showAddItemDialog() {
@@ -46,15 +44,9 @@ class _Inventory_GridState extends State<Inventory_Grid> {
       builder: (context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
+            borderRadius: BorderRadius.circular(12.0),
           ),
-          title: const Text(
-            'Add New Item',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.blueAccent,
-            ),
-          ),
+          title: const Text('Add New Item'),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -87,13 +79,6 @@ class _Inventory_GridState extends State<Inventory_Grid> {
                 }
               },
               child: const Text('Add'),
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.blueAccent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-              ),
             ),
           ],
         );
@@ -110,11 +95,7 @@ class _Inventory_GridState extends State<Inventory_Grid> {
         keyboardType: inputType,
         decoration: InputDecoration(
           labelText: labelText,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          filled: true,
-          fillColor: Colors.grey[200],
+          border: const OutlineInputBorder(),
         ),
       ),
     );
@@ -125,15 +106,16 @@ class _Inventory_GridState extends State<Inventory_Grid> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Categories (${inventory.length})'),
+        backgroundColor: Colors.grey[800],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3, // Number of columns
+            crossAxisCount: 3,
             crossAxisSpacing: 8.0,
             mainAxisSpacing: 8.0,
-            childAspectRatio: 3 / 2, // Aspect ratio of each grid item
+            childAspectRatio: 3 / 2,
           ),
           itemCount: inventory.length,
           itemBuilder: (context, index) {
@@ -141,19 +123,17 @@ class _Inventory_GridState extends State<Inventory_Grid> {
 
             return GestureDetector(
               onTap: () {
-                // Navigate to the NewInventory screen when the card is tapped
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => ProductScreen(
-                      categoryId: item
-                          .id!, // Passing the categoryId to ProductListScreen
+                      categoryId: item.id!,
                     ),
                   ),
                 );
               },
               child: Card(
-                elevation: 4.0,
+                elevation: 2.0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
@@ -161,42 +141,38 @@ class _Inventory_GridState extends State<Inventory_Grid> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Displaying image from the internet with fallback handling
                     Expanded(
-                      // ignore: unnecessary_null_comparison
                       child: item.categoryImageUrl != null
                           ? Image.network(
-                              item.categoryImageUrl,
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons
-                                    .error); // Fallback if image fails to load
-                              },
-                              loadingBuilder:
-                                  (context, child, loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return const Center(
-                                    child: CircularProgressIndicator());
-                              },
-                            )
-                          : const Icon(Icons
-                              .image_not_supported), // Fallback if image is null
-                    ),
-                    const SizedBox(height: 8.0),
-                    Text(
-                      item.categoryName ?? 'Unknown', // Fallback for null name
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16.0,
-                      ),
+                        item.categoryImageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(Icons.image_not_supported);
+                        },
+                        loadingBuilder:
+                            (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        },
+                      )
+                          : const Icon(Icons.image_not_supported),
                     ),
                     const SizedBox(height: 4.0),
                     Text(
-                      item.categoryDescription ??
-                          'No description available', // Fallback for null description
+                      item.categoryName ?? 'Unknown',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14.0,
+                      ),
+                    ),
+                    const SizedBox(height: 2.0),
+                    Text(
+                      item.categoryDescription ?? 'No description available',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 12.0,
+                        color: Colors.grey,
                       ),
                     ),
                   ],
@@ -209,7 +185,7 @@ class _Inventory_GridState extends State<Inventory_Grid> {
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddItemDialog,
         child: const Icon(Icons.add),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.grey[800],
       ),
     );
   }
