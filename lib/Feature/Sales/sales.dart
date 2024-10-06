@@ -196,30 +196,6 @@ class _SalespreviewpageState extends State<Salespreviewpage> {
                 },
               ),
             const SizedBox(height: 16),
-            const Text('Item Quantity:', style: TextStyle(fontSize: 18)),
-            TextField(
-              controller: itemQuantityController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Enter Item Quantity',
-              ),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-
-                handleSale();
-                buyerController.clear();
-                itemQuantityController.clear();                
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-              ),
-              child:  Text('Record Sales',style: TextStyle(color: Colors.white),),
-            ),
-            const SizedBox(height: 32),
-
             // Graph Section
           ],            
           ),
