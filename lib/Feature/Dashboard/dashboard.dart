@@ -14,7 +14,11 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   List<InventoryData> inventoryData = [];
   List<SalesData> salesData = [];
-  List<ContractData> ongoingContracts = []; // Ongoing contracts list
+  int activeContractsCount = 0; // To hold active contracts count
+  int completedContractsCount = 0; // To hold completed contracts count
+  double totalSalesPrice = 0; // To hold total sales price
+  double totalInventoryPrice = 0; // To hold total inventory price
+  int totalInventoryCount = 0; // To hold total inventory count
   bool isLoading = true;
   String errorMessage = '';
 
@@ -24,14 +28,43 @@ class _DashboardPageState extends State<DashboardPage> {
     fetchData();
   }
 
-  Future<void> fetchData() async {
+  Future<void> fetchDashBoardData() async {
+    try {
+      final response = await http.get(Uri.parse('http://localhost:3000/dashboard'));
+
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        print(jsonResponse['totalInventoryPrice']);
+        setState(() {
+          activeContractsCount = jsonResponse['active'];
+          completedContractsCount = jsonResponse['completed'];
+          totalSalesPrice = jsonResponse['totalSalesPrice'];
+          totalInventoryPrice = jsonResponse['totalInventoryPrice'];
+          totalInventoryCount = jsonResponse['totalCount'];
+          isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to load dashboard data');
+      }
+    } catch (error) {
+      setState(() {
+        errorMessage = error.toString();
+        isLoading = false;
+      });
+    }
+
+    // Call separate functions to fetch inventory and sales data
+    
+  }
+
+  Future<void> fetchData() async{
+    fetchDashBoardData();
     await Future.wait([fetchInventoryData(), fetchSalesData(), fetchContractsData()]);
   }
 
   Future<void> fetchInventoryData() async {
     try {
-      final response = await http
-          .get(Uri.parse('http://localhost:3000/inventory/analysis'));
+      final response = await http.get(Uri.parse('http://localhost:3000/inventory/analysis'));
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = json.decode(response.body);
@@ -39,7 +72,6 @@ class _DashboardPageState extends State<DashboardPage> {
           inventoryData = jsonResponse
               .map((data) => InventoryData(data['name'], data['quantity']))
               .toList();
-          isLoading = false;
         });
       } else {
         throw Exception('Failed to load inventory data');
@@ -47,7 +79,6 @@ class _DashboardPageState extends State<DashboardPage> {
     } catch (error) {
       setState(() {
         errorMessage = error.toString();
-        isLoading = false;
       });
     }
   }
@@ -62,7 +93,6 @@ class _DashboardPageState extends State<DashboardPage> {
           salesData = jsonResponse
               .map((data) => SalesData(data['productName'], data['totalQuantitySold']))
               .toList();
-          isLoading = false;
         });
       } else {
         throw Exception('Failed to load sales data');
@@ -70,20 +100,19 @@ class _DashboardPageState extends State<DashboardPage> {
     } catch (error) {
       setState(() {
         errorMessage = error.toString();
-        isLoading = false;
       });
     }
   }
 
   Future<void> fetchContractsData() async {
     // Simulate a fetch for ongoing contracts
-    setState(() {
-      ongoingContracts = [
-        ContractData('Website Development', 'In Progress', '31st Oct'),
-        ContractData('Mobile App Redesign', 'In Progress', '15th Nov'),
-        ContractData('Cloud Infrastructure Setup', 'In Progress', '28th Nov'),
-      ];
-    });
+    // setState(() {
+    //   ongoingContracts = [
+    //     ContractData('Website Development', 'In Progress', '31st Oct'),
+    //     ContractData('Mobile App Redesign', 'In Progress', '15th Nov'),
+    //     ContractData('Cloud Infrastructure Setup', 'In Progress', '28th Nov'),
+    //   ];
+    // });
   }
 
   @override
@@ -106,107 +135,80 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Overview',
-              style: TextStyle(
-                  fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildStatCard('Active Contracts', '5'),
-                const SizedBox(width: 10,),
-                _buildStatCard('Completed Contracts', '10'),
-                const SizedBox(width: 10,),
-                _buildStatCard('Total Purchase', '₹40,000'),
-                const SizedBox(width: 10,),
-                _buildStatCard('Total Sales', '₹90,000'),
-                const SizedBox(width: 10,),
-              ],
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Sales and Inventory Overview',
-              style: TextStyle(
-                  fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 400,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white, // Minimalist color
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12, // Soft shadow for depth
-                          blurRadius: 10,
-                        )
-                      ],
-                    ),
-                    child: isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : _buildSalesChart(),
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Overview',
+                    style: TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Container(
-                    height: 400,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 10,
-                        )
-                      ],
-                    ),
-                    child: isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : _buildInventoryPieChart(),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildStatCard('Active Contracts', activeContractsCount.toString()),
+                      const SizedBox(width: 10,),
+                      _buildStatCard('Completed Contracts', completedContractsCount.toString()),
+                      const SizedBox(width: 10,),
+                      _buildStatCard('Total Purchase', '₹${totalSalesPrice.toString()}'),
+                      const SizedBox(width: 10,),
+                      _buildStatCard('Total Inventory', '₹${totalInventoryPrice.toString()}'),
+                      const SizedBox(width: 10,),
+                    ],
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Ongoing Contracts',
-              style: TextStyle(
-                  fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 10,
-                    )
-                  ],
-                ),
-                child: ListView.builder(
-                  itemCount: ongoingContracts.length,
-                  itemBuilder: (context, index) {
-                    return _buildContractCard(ongoingContracts[index]);
-                  },
-                ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Sales and Inventory Overview',
+                    style: TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          height: 400,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 10,
+                              )
+                            ],
+                          ),
+                          child: _buildSalesChart(),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Container(
+                          height: 400,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 10,
+                              )
+                            ],
+                          ),
+                          child: _buildInventoryPieChart(),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -220,7 +222,7 @@ class _DashboardPageState extends State<DashboardPage> {
           borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(
-              color: Colors.black12, // Minimal shadow
+              color: Colors.black12,
               blurRadius: 6,
             ),
           ],
@@ -266,7 +268,6 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget _buildInventoryPieChart() {
-    // Define a list of colors for each segment
     final List<Color> colors = [
       Colors.blue,
       Colors.red,
@@ -282,47 +283,25 @@ class _DashboardPageState extends State<DashboardPage> {
 
     return SfCircularChart(
       title: ChartTitle(text: 'Inventory Overview'),
-      legend: Legend(
-        isVisible: true,
-        position: LegendPosition.bottom,
-      ),
-      tooltipBehavior: TooltipBehavior(enable: true),
+      legend: Legend(isVisible: true),
       series: <CircularSeries>[
         PieSeries<InventoryData, String>(
           dataSource: inventoryData,
           xValueMapper: (InventoryData data, _) => data.name,
           yValueMapper: (InventoryData data, _) => data.quantity,
-          dataLabelMapper: (InventoryData data, _) =>
-          '${data.name}: ${data.quantity}',
-          dataLabelSettings: const DataLabelSettings(
-            isVisible: true,
-            labelAlignment: ChartDataLabelAlignment.outer,
-            showZeroValue: false,
-            color: Colors.black,
-          ),
-          enableTooltip: true,
-          pointColorMapper: (InventoryData data, index) {
-            // Assign colors based on the index of the data
-            return colors[index % colors.length]; // Cycle through the colors
-          },
-          explode: true, // Enable explode animation
-          explodeIndex: 0, // Explode the first item
-          animationDuration: 1200, // Duration of the pie chart animation
+          dataLabelSettings: const DataLabelSettings(isVisible: true),
+          pointColorMapper: (InventoryData data, _) => colors[inventoryData.indexOf(data) % colors.length],
         )
       ],
     );
   }
 
-
-
-
   Widget _buildContractCard(ContractData contract) {
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: ListTile(
-        title: Text(contract.projectName, style: const TextStyle(color: Colors.black)),
-        subtitle: Text('Status: ${contract.status}\nDue: ${contract.dueDate}'),
-        tileColor: Colors.grey[100],
+        title: Text(contract.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text('Status: ${contract.status} - Due: ${contract.dueDate}'),
       ),
     );
   }
@@ -330,7 +309,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
 class SalesData {
   final String month;
-  final int sales;
+  final double sales;
 
   SalesData(this.month, this.sales);
 }
@@ -342,11 +321,10 @@ class InventoryData {
   InventoryData(this.name, this.quantity);
 }
 
-// Class for ongoing contracts
 class ContractData {
-  final String projectName;
+  final String name;
   final String status;
   final String dueDate;
 
-  ContractData(this.projectName, this.status, this.dueDate);
+  ContractData(this.name, this.status, this.dueDate);
 }
